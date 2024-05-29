@@ -26,11 +26,11 @@ public class Main {
                         if (!line.isEmpty()) {
                             outputStream.write("+PONG\r\n".getBytes());
                             outputStream.flush();
-
+                            outputStream.close();
                         }
 
                     }
-                    outputStream.close();
+
                 }
             }
 
