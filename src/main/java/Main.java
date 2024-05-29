@@ -30,7 +30,7 @@ public class Main {
                         }
 
                     }
-                    outputStreamgi.close();
+                    outputStream.close();
                 }
             }
 
