@@ -25,8 +25,7 @@ public class Main {
                     while ((line = bufferedReader.readLine()) != null) {
                         if (!line.isEmpty()) {
                             outputStream.write("+PONG\r\n".getBytes());
-                            outputStream.flush();
-                            outputStream.close();
+
                         }
 
                     }
