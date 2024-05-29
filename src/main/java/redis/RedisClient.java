@@ -38,6 +38,6 @@ public class RedisClient implements Runnable {
     }
 
     private static byte[] getResponse() {
-        return ("+" + Command.PONG.getValue() + "\n\r").getBytes();
+        return ("+" + Command.PONG.getValue() + "\r\n").getBytes();
     }
 }
