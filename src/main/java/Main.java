@@ -23,10 +23,13 @@ public class Main {
             InputStream inputStream = clientSocket.getInputStream();
 
             while (clientSocket.isConnected()) {
-                OutputStream outputStream = clientSocket.getOutputStream();
-                outputStream.write("+PONG\r\n".getBytes());
-                outputStream.flush();
-                outputStream.close();
+                InputStream inputStream1 = clientSocket.getInputStream();
+                if (inputStream1.read() != -1){
+                    OutputStream outputStream = clientSocket.getOutputStream();
+                    outputStream.write("+PONG\r\n".getBytes());
+                    outputStream.flush();
+                    outputStream.close();
+                }
             }
 
         } catch (IOException e) {
