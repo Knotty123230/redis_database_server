@@ -18,19 +18,7 @@ public class Main {
             serverSocket.setReuseAddress(true);
             // Wait for connection from client.
             clientSocket = serverSocket.accept();
-            while (!serverSocket.isClosed()) {
-                try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
-                    OutputStream outputStream = clientSocket.getOutputStream();
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null && !line.isEmpty() ) {
-                        if (line.contains("PING")){
-                            outputStream.write("+PONG\r\n".getBytes());
-                            outputStream.flush();
-                        }
-
-                        }
-                }
-            }
+                readLinesFromClientAndSendResponse(clientSocket);
 
 
         } catch (IOException e) {
@@ -43,6 +31,20 @@ public class Main {
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());
             }
+        }
+    }
+
+    private static void readLinesFromClientAndSendResponse(Socket clientSocket) throws IOException {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+            OutputStream outputStream = clientSocket.getOutputStream();
+            String line;
+            while ((line = bufferedReader.readLine()) != null && !line.isEmpty() ) {
+                if (line.contains("PING")){
+                    outputStream.write("+PONG\r\n".getBytes());
+                    outputStream.flush();
+                }
+
+                }
         }
     }
 }
