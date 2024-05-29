@@ -22,12 +22,13 @@ public class Main {
                 try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
                     OutputStream outputStream = clientSocket.getOutputStream();
                     String line;
-                    while ((line = bufferedReader.readLine()) != null && !line.isEmpty()) {
+                    while ((line = bufferedReader.readLine()) != null && !line.isEmpty() ) {
+                        if (line.contains("PING")){
                             outputStream.write("+PONG\r\n".getBytes());
-                            outputStream.close();
+                            outputStream.flush();
                         }
 
-
+                        }
                 }
             }
 
