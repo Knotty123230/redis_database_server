@@ -18,12 +18,13 @@ public class Main {
             serverSocket.setReuseAddress(true);
             // Wait for connection from client.
             clientSocket = serverSocket.accept();
-            while (clientSocket.isConnected()) {
+            while (!serverSocket.isClosed()) {
                 try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
                     OutputStream outputStream = clientSocket.getOutputStream();
                     String line;
-                    if ((line = bufferedReader.readLine()) != null && !line.isEmpty()) {
+                    while ((line = bufferedReader.readLine()) != null && !line.isEmpty()) {
                             outputStream.write("+PONG\r\n".getBytes());
+                            outputStream.close();
                         }
 
 
