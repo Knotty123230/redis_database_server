@@ -19,16 +19,17 @@ public class Main {
             // Wait for connection from client.
             clientSocket = serverSocket.accept();
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+                OutputStream outputStream = clientSocket.getOutputStream();
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
-                    if (!line.isEmpty()){
-                        OutputStream outputStream = clientSocket.getOutputStream();
+                    if (!line.isEmpty()) {
                         outputStream.write("+PONG\r\n".getBytes());
                         outputStream.flush();
 
                     }
 
                 }
+                outputStream.close();
             }
 
 
