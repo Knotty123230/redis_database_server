@@ -22,13 +22,10 @@ public class Main {
                 try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
                     OutputStream outputStream = clientSocket.getOutputStream();
                     String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        if (!line.isEmpty()) {
+                    if ((line = bufferedReader.readLine()) != null && !line.isEmpty()) {
                             outputStream.write("+PONG\r\n".getBytes());
-
                         }
 
-                    }
 
                 }
             }
