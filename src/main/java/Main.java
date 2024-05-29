@@ -21,7 +21,7 @@ public class Main {
           clientSocket = serverSocket.accept();
 
             OutputStream outputStream = clientSocket.getOutputStream();
-            outputStream.write("+PONG\\r\\n".getBytes());
+            outputStream.write("+PONG".getBytes());
             outputStream.flush();
             outputStream.close();
         } catch (IOException e) {
