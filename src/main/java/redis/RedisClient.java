@@ -1,10 +1,14 @@
 package redis;
 
+import redis.command.CommandProcessor;
+import redis.factory.CommandFactory;
+
 import java.io.*;
 import java.net.Socket;
 
 public class RedisClient implements Runnable {
     private final Socket socket;
+
 
     public RedisClient(Socket socket) {
         this.socket = socket;
@@ -18,9 +22,9 @@ public class RedisClient implements Runnable {
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
                 String line;
                 while ((line = bufferedReader.readLine()) != null && !line.isEmpty()) {
-                    byte[] response = processRequest(line);
-                    if (response.length == 0) continue;
-                    outputStream.write(response);
+                    byte[] bytes = processCommand(line);
+
+                    outputStream.write(bytes);
                     outputStream.flush();
                 }
             }
@@ -29,15 +33,11 @@ public class RedisClient implements Runnable {
         }
     }
 
-    private static byte[] processRequest(String line) {
-        if (line.equalsIgnoreCase(Command.PING.getValue())) {
-            return getResponse();
-
-        }
-        return new byte[]{};
+    private synchronized byte[] processCommand(String line) {
+        CommandFactory commandFactory = new CommandFactory(line);
+        CommandProcessor instance = commandFactory.getInstance();
+        return instance.processCommand(line);
     }
 
-    private static byte[] getResponse() {
-        return ("+" + Command.PONG.getValue() + "\r\n").getBytes();
-    }
+
 }

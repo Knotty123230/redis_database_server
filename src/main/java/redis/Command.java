@@ -2,7 +2,8 @@ package redis;
 
 public enum Command {
     PING("PING"),
-    PONG("PONG");
+    PONG("PONG"),
+    ECHO("ECHO");
     private final String value;
     Command(String value) {
         this.value = value;
