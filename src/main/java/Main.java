@@ -9,13 +9,13 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Logs from your program will appear here!");
-        Socket clientSocket = null;
+
         int port = 6379;
         try (ServerSocket serverSocket = new ServerSocket(port);) {
 
             serverSocket.setReuseAddress(true);
             while (!serverSocket.isClosed()) {
-                clientSocket = serverSocket.accept();
+                Socket clientSocket = serverSocket.accept();
                 RedisClient task = new RedisClient(clientSocket);
                 new Thread(task).start();
             }
