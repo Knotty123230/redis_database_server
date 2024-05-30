@@ -1,4 +1,5 @@
 import redis.RedisClient;
+import redis.RedisClientConnection;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -21,8 +22,7 @@ public class Main {
             serverSocket.setReuseAddress(true);
             while (true) {
                 clientSocket = serverSocket.accept();
-                RedisClient redisClient = new RedisClient(clientSocket);
-                new Thread(redisClient).start();
+                new RedisClientConnection(clientSocket).start();
             }
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
