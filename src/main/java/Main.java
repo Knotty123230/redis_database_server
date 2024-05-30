@@ -3,9 +3,14 @@ import redis.RedisClient;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 public class Main {
+
     public static void main(String[] args) {
         System.out.println("Logs from your program will appear here!");
         ServerSocket serverSocket;
@@ -14,10 +19,17 @@ public class Main {
         try {
             serverSocket = new ServerSocket(port);
             serverSocket.setReuseAddress(true);
-            clientSocket = serverSocket.accept();
-            new RedisClient(clientSocket).run();
+            ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            while (!serverSocket.isClosed()) {
+                clientSocket = serverSocket.accept();
+                RedisClient redisClient = new RedisClient(clientSocket);
+                executorService.execute(redisClient);
+                executorService.awaitTermination(10, TimeUnit.SECONDS);
+            }
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
+        } catch (InterruptedException e) {
+            System.out.println("InterruptedException: " + e.getMessage());
         } finally {
             try {
                 if (clientSocket != null) {
