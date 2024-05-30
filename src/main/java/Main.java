@@ -19,10 +19,10 @@ public class Main {
         try {
             serverSocket = new ServerSocket(port);
             serverSocket.setReuseAddress(true);
-            while (!serverSocket.isClosed()) {
+            while (true) {
                 clientSocket = serverSocket.accept();
                 RedisClient redisClient = new RedisClient(clientSocket);
-                redisClient.run();
+                new Thread(redisClient).start();
             }
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
