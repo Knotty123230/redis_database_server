@@ -6,17 +6,17 @@ import redis.command.EchoCommandProcessor;
 import redis.command.PingCommandProcessor;
 
 public class CommandFactory {
-    private final String command;
+    private final Command command;
 
-    public CommandFactory(String command) {
+    public CommandFactory(Command command) {
         this.command = command;
     }
 
     public CommandProcessor getInstance(){
         System.out.println("factory get instanse of command %s".formatted(command));
-        if (command.equalsIgnoreCase(Command.PING.getValue())){
+        if (command.equals(Command.PING)){
             return new PingCommandProcessor();
-        } else if (command.toLowerCase().contains(Command.ECHO.getValue().toLowerCase())) {
+        } else if (command.equals(Command.ECHO)) {
             return new EchoCommandProcessor();
         }
         return null;

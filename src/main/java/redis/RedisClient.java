@@ -38,19 +38,17 @@ public class RedisClient implements Runnable {
         if (line.equalsIgnoreCase(Command.ECHO.getValue())){
             bufferedReader.readLine();
             String command = bufferedReader.readLine();
-            return processCommand(command);
+            return processCommand(Command.ECHO, command);
         }else if (line.equalsIgnoreCase(Command.PING.getValue())){
-            byte[] response = processCommand(line);
+            byte[] response = processCommand(Command.PING, line);
             return response;
         }
         return new byte[0];
     }
 
-    private synchronized byte[] processCommand(String line) {
-        CommandFactory commandFactory = new CommandFactory(line);
+    private synchronized byte[] processCommand(Command command, String line) {
+        CommandFactory commandFactory = new CommandFactory(command);
         CommandProcessor instance = commandFactory.getInstance();
         return instance.processCommand(line);
     }
-
-
 }
