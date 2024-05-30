@@ -13,6 +13,7 @@ public class CommandFactory {
     }
 
     public CommandProcessor getInstance(){
+        System.out.println("factory get instanse of command %s".formatted(command));
         if (command.equalsIgnoreCase(Command.PING.getValue())){
             return new PingCommandProcessor();
         } else if (command.toLowerCase().contains(Command.ECHO.getValue().toLowerCase())) {
