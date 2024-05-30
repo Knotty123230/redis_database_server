@@ -11,7 +11,7 @@ public class Main {
         System.out.println("Logs from your program will appear here!");
         Socket clientSocket = null;
         int port = 6379;
-        try (ServerSocket serverSocket = new ServerSocket(port);){
+        try (ServerSocket serverSocket = new ServerSocket(port);) {
 
             serverSocket.setReuseAddress(true);
             while (!serverSocket.isClosed()) {
@@ -21,14 +21,6 @@ public class Main {
             }
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
-        }  finally {
-            try {
-                if (clientSocket != null) {
-                    clientSocket.close();
-                }
-            } catch (IOException e) {
-                System.out.println("IOException: " + e.getMessage());
-            }
         }
     }
 
