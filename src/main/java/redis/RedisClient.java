@@ -22,8 +22,9 @@ public class RedisClient implements Runnable {
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
                 String line;
                 while ((line = bufferedReader.readLine()) != null && !line.isEmpty()) {
+                    boolean isValid = validateLine(line);
+                    if (!isValid) continue;
                     byte[] bytes = processCommand(line);
-
                     outputStream.write(bytes);
                     outputStream.flush();
                 }
@@ -31,6 +32,10 @@ public class RedisClient implements Runnable {
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
         }
+    }
+
+    private boolean validateLine(String line) {
+        return line.equalsIgnoreCase(Command.ECHO.getValue()) || line.equalsIgnoreCase(Command.PING.getValue());
     }
 
     private synchronized byte[] processCommand(String line) {
