@@ -12,9 +12,9 @@ public class CommandFactory {
         this.command = command;
     }
 
-    public CommandProcessor getInstance(){
-        System.out.println("factory get instanse of command %s".formatted(command));
-        if (command.equals(Command.PING)){
+    public CommandProcessor getInstance() {
+        System.out.printf("factory get instance of command %s%n", command);
+        if (command.equals(Command.PING)) {
             return new PingCommandProcessor();
         } else if (command.equals(Command.ECHO)) {
             return new EchoCommandProcessor();

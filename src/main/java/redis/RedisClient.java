@@ -17,16 +17,15 @@ public class RedisClient implements Runnable {
     @Override
     public void run() {
         try (OutputStream outputStream = socket.getOutputStream();
-             InputStream inputStream = socket.getInputStream();
+             InputStream inputStream = socket.getInputStream()
         ) {
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
                 String line;
                 while ((line = bufferedReader.readLine()) != null && !line.isEmpty()) {
-                        byte[] response = validateLine(bufferedReader, line);
-                        if (response.length == 0) continue;
-                        outputStream.write(response);
-                        outputStream.flush();
-
+                    byte[] response = validateLine(bufferedReader, line);
+                    if (response.length == 0) continue;
+                    outputStream.write(response);
+                    outputStream.flush();
                 }
             }
         } catch (IOException e) {
@@ -35,13 +34,13 @@ public class RedisClient implements Runnable {
     }
 
     private byte[] validateLine(BufferedReader bufferedReader, String line) throws IOException {
-        if (line.equalsIgnoreCase(Command.ECHO.getValue())){
+        if (line.equalsIgnoreCase(Command.ECHO.getValue())) {
+            //skip line
             bufferedReader.readLine();
             String command = bufferedReader.readLine();
             return processCommand(Command.ECHO, command);
-        }else if (line.equalsIgnoreCase(Command.PING.getValue())){
-            byte[] response = processCommand(Command.PING, line);
-            return response;
+        } else if (line.equalsIgnoreCase(Command.PING.getValue())) {
+            return processCommand(Command.PING, line);
         }
         return new byte[0];
     }

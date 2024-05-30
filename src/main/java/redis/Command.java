@@ -5,6 +5,7 @@ public enum Command {
     PONG("PONG"),
     ECHO("ECHO");
     private final String value;
+
     Command(String value) {
         this.value = value;
     }
