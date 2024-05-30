@@ -19,18 +19,14 @@ public class Main {
         try {
             serverSocket = new ServerSocket(port);
             serverSocket.setReuseAddress(true);
-            ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             while (!serverSocket.isClosed()) {
                 clientSocket = serverSocket.accept();
                 RedisClient redisClient = new RedisClient(clientSocket);
-                executorService.execute(redisClient);
-                executorService.awaitTermination(10, TimeUnit.SECONDS);
+                redisClient.run();
             }
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
-        } catch (InterruptedException e) {
-            System.out.println("InterruptedException: " + e.getMessage());
-        } finally {
+        }  finally {
             try {
                 if (clientSocket != null) {
                     clientSocket.close();
