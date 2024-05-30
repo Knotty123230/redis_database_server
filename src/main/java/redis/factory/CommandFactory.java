@@ -15,7 +15,7 @@ public class CommandFactory {
     public CommandProcessor getInstance(){
         if (command.equalsIgnoreCase(Command.PING.getValue())){
             return new PingCommandProcessor();
-        } else if (command.contains(Command.ECHO.getValue())) {
+        } else if (command.toLowerCase().contains(Command.ECHO.getValue().toLowerCase())) {
             return new EchoCommandProcessor();
         }
         return null;
