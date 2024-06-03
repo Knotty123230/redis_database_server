@@ -12,6 +12,8 @@ public class CommandUtil {
             return Command.SET;
         } else if (remove.toLowerCase().contains(Command.GET.getValue().toLowerCase())) {
             return Command.GET;
+        }else if (remove.toLowerCase().contains(Command.INFO.getValue().toLowerCase())) {
+            return Command.INFO;
         } else return null;
     }
 }

@@ -20,6 +20,8 @@ public class CommandFactory {
             return new SetCommandProcessor();
         } else if (command.equals(Command.GET)) {
             return new GetCommandProcessor();
+        }else if (command.equals(Command.INFO)){
+            return new InfoCommandProcessor();
         }
         return null;
     }

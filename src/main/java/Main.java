@@ -11,7 +11,6 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println(Arrays.toString(args));
         Map<String, String> parameters = extractArgs(args);
         System.out.println("Logs from your program will appear here!");
         int port = 6379;
