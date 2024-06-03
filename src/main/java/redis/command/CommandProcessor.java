@@ -1,5 +1,7 @@
 package redis.command;
 
+import java.util.List;
+
 public interface CommandProcessor {
-    byte[] processCommand(String command);
+    byte[] processCommand(List<String> command);
 }

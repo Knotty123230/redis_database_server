@@ -8,7 +8,9 @@ public class CommandExtractor {
     public String getCommandMessage(BufferedReader bufferedReader){
         try {
             bufferedReader.readLine();
-            return bufferedReader.readLine();
+            String command = bufferedReader.readLine();
+            System.out.println("Exctract command: " + command);
+            return command;
         } catch (IOException e) {
             System.out.println("IOException CommandExtractor: " + e.getMessage());
             return "";
