@@ -3,7 +3,8 @@ package redis;
 public enum Command {
     PING("PING"),
     PONG("PONG"),
-    ECHO("ECHO");
+    ECHO("ECHO"),
+    SET("SET"), GET("GET");
     private final String value;
 
     Command(String value) {
