@@ -1,8 +1,8 @@
 package redis;
 
-import redis.command.CommandExtractor;
 import redis.command.CommandParser;
 import redis.command.CommandProcessor;
+import redis.command.CommandUtil;
 import redis.factory.CommandFactory;
 
 import java.io.*;
@@ -43,22 +43,12 @@ public class RedisClient implements Runnable {
 
 
     private synchronized byte[] processCommand(List<String> commands) {
-        String remove = commands.remove(0);
-        Command command = getCommand(remove);
+        String remove = commands.removeFirst();
+        Command command = CommandUtil.getCommand(remove);
         CommandFactory commandFactory = new CommandFactory(command);
         CommandProcessor commandProcessor = commandFactory.getInstance();
         return commandProcessor.processCommand(commands);
     }
 
-    private Command getCommand(String remove) {
-        if (remove.toLowerCase().contains(Command.ECHO.getValue().toLowerCase())){
-            return Command.ECHO;
-        } else if (remove.toLowerCase().contains(Command.PING.getValue().toLowerCase())) {
-            return Command.PING;
-        } else if (remove.toLowerCase().contains(Command.SET.getValue().toLowerCase())) {
-            return Command.SET;
-        } else if (remove.toLowerCase().contains(Command.GET.getValue().toLowerCase())) {
-            return Command.GET;
-        }else return null;
-    }
+
 }

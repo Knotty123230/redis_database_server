@@ -11,7 +11,10 @@ public class GetCommandProcessor implements CommandProcessor {
     @Override
     public byte[] processCommand(List<String> commands) {
         System.out.printf("Processing GET command %s%n", commands);
-        String response = storage.getCommand(commands.get(0));
+        String response = storage.getCommand(commands.getFirst().toLowerCase());
+        if (response.isEmpty() || response.isBlank()) {
+            return "$-1\r\n".getBytes();
+        }
         return ResponseUtil.getResponse(response);
     }
 
