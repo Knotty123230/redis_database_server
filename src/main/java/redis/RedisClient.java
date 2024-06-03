@@ -47,7 +47,7 @@ public class RedisClient implements Runnable {
             case "SET":
                 return processCommand(Command.SET, commandExtractor.getCommandMessage(bufferedReader));
             case "GET":
-                return processCommand(Command.GET, commandExtractor.getCommandMessage(bufferedReader));
+                return processCommand(Command.GET, commandExtractor.getCommandMessage(bufferedReader) + " " + commandExtractor.getCommandMessage(bufferedReader));
 
             default:
                 return new byte[0];
