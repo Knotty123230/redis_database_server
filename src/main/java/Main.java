@@ -36,11 +36,15 @@ public class Main {
     }
 
     private static void findRole(Map<String, String> parameters) {
+        Map<String, String> applicationInfo = Main.applicationInfo.getInfo();
         String role = "master";
         if (parameters.containsKey("--replicaof")) {
             role = "slave";
+        } else {
+            applicationInfo.put("master_repl_offset", "0");
+            applicationInfo.put("master_replid", "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb");
         }
-        applicationInfo.getInfo().put("role", role);
+        applicationInfo.put("role", role);
     }
 
     private static int getPortFromApplicationParameters(Map<String, String> parameters, int port) {
