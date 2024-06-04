@@ -1,5 +1,7 @@
 package redis.command;
 
+import redis.utils.ResponseUtil;
+
 import java.util.List;
 
 public class EchoCommandProcessor implements CommandProcessor {

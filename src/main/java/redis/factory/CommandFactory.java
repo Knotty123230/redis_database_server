@@ -1,6 +1,6 @@
 package redis.factory;
 
-import redis.Command;
+import redis.command.model.Command;
 import redis.command.*;
 
 public class CommandFactory {

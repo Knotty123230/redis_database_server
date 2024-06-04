@@ -1,4 +1,4 @@
-package redis.command;
+package redis.utils;
 
 public class ResponseUtil {
     public static byte[] getResponse(String response) {

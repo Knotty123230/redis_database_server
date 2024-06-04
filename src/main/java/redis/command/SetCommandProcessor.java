@@ -1,6 +1,6 @@
 package redis.command;
 
-import redis.Command;
+import redis.command.model.Command;
 import redis.storage.RedisStorage;
 
 import java.util.HashMap;

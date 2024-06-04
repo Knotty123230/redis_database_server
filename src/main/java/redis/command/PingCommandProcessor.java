@@ -1,6 +1,6 @@
 package redis.command;
 
-import redis.Command;
+import redis.command.model.Command;
 
 import java.util.List;
 

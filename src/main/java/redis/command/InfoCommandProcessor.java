@@ -1,7 +1,8 @@
 package redis.command;
 
-import redis.Command;
+import redis.command.model.Command;
 import redis.service.ApplicationInfo;
+import redis.utils.ResponseUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ public class InfoCommandProcessor implements CommandProcessor{
     private final ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
     @Override
     public byte[] processCommand(List<String> commands) {
+        System.out.println(applicationInfo.getInfo());
         String command = commands.getFirst();
         if (command.equalsIgnoreCase(Command.REPLICATION.getValue())){
             Map<String, String> info = applicationInfo.getInfo();

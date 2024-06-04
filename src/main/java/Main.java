@@ -1,33 +1,54 @@
-import redis.RedisClient;
+import redis.RedisSocket;
+import redis.service.ApplicationInfo;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class Main {
+    private static final ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
 
     public static void main(String[] args) {
-        Map<String, String> parameters = extractArgs(args);
         System.out.println("Logs from your program will appear here!");
+        Map<String, String> parameters = extractArgs(args);
+        System.out.println("args: " + Arrays.toString(args));
         int port = 6379;
+        findRole(parameters);
+        port = getPortFromApplicationParameters(parameters, port);
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(port);
+            Thread thread = new Thread(new RedisSocket(serverSocket));
+            thread.start();
+        } catch (IOException e) {
+            try {
+                if (serverSocket != null) {
+                    serverSocket.close();
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private static void findRole(Map<String, String> parameters) {
+        String role = "master";
+        if (parameters.containsKey("--replicaof")) {
+            role = "slave";
+        }
+        applicationInfo.getInfo().put("role", role);
+    }
+
+    private static int getPortFromApplicationParameters(Map<String, String> parameters, int port) {
         if (parameters.containsKey("--port")) {
             port = Integer.parseInt(parameters.get("--port"));
         }
-        try (ServerSocket serverSocket = new ServerSocket(port);) {
-            serverSocket.setReuseAddress(true);
-            while (!serverSocket.isClosed()) {
-                Socket clientSocket = serverSocket.accept();
-                RedisClient task = new RedisClient(clientSocket);
-                Thread thread = new Thread(task);
-                thread.start();
-            }
-        } catch (IOException e) {
-            System.out.println("IOException: " + e.getMessage());
-        }
+
+        return port;
     }
 
     private static Map<String, String> extractArgs(String[] args) {
@@ -38,6 +59,4 @@ public class Main {
         }
         return parameters;
     }
-
-
 }

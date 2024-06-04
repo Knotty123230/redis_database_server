@@ -1,4 +1,4 @@
-package redis.command;
+package redis.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandParser {
+
     public List<String> parseCommand(BufferedReader bufferedReader, String line) {
         try {
             ArrayList<String> commands = new ArrayList<>();

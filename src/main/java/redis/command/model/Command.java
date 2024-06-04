@@ -1,4 +1,4 @@
-package redis;
+package redis.command.model;
 
 public enum Command {
     PING("PING"),
