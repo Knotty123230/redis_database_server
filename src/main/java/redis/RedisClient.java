@@ -1,14 +1,16 @@
 package redis;
 
-import redis.command.model.Command;
-import redis.parser.CommandParser;
 import redis.command.CommandProcessor;
-import redis.utils.CommandUtil;
+import redis.command.model.Command;
 import redis.factory.CommandFactory;
+import redis.model.Role;
+import redis.parser.CommandParser;
+import redis.service.ApplicationInfo;
+import redis.utils.CommandUtil;
+import redis.utils.ResponseUtil;
 
 import java.io.*;
 import java.net.Socket;
-import java.sql.SQLData;
 import java.util.List;
 
 public class RedisClient implements Runnable {
@@ -24,11 +26,13 @@ public class RedisClient implements Runnable {
         try (OutputStream outputStream = socket.getOutputStream();
              InputStream inputStream = socket.getInputStream();
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+
             handleClient(bufferedReader, outputStream);
         } catch (IOException e) {
             System.out.println("IOException while handling client: " + e.getMessage());
         }
     }
+
     private void handleClient(BufferedReader bufferedReader, OutputStream outputStream) throws IOException {
         String line;
         while ((line = bufferedReader.readLine()) != null) {

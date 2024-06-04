@@ -1,9 +1,9 @@
 import redis.RedisSocket;
+import redis.replicas.ReplicaConnectionService;
 import redis.service.ApplicationInfo;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,11 +11,10 @@ public class Main {
     private static final ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
 
     public static void main(String[] args) {
-        System.out.println("Logs from your program will appear here!");
         Map<String, String> parameters = extractArgs(args);
-        System.out.println("args: " + Arrays.toString(args));
         int port = 6379;
-        findRole(parameters);
+        String[] masterPortAndHost = findRole(parameters);
+        checkConnection(masterPortAndHost);
         port = getPortFromApplicationParameters(parameters, port);
         ServerSocket serverSocket = null;
         try {
@@ -35,16 +34,31 @@ public class Main {
 
     }
 
-    private static void findRole(Map<String, String> parameters) {
+    private static void checkConnection(String[] masterPortAndHost) {
+        if (masterPortAndHost.length > 0) {
+            try {
+                ReplicaConnectionService replicaConnectionService = new ReplicaConnectionService(masterPortAndHost);
+                replicaConnectionService.getConnection();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private static String[] findRole(Map<String, String> parameters) {
         Map<String, String> applicationInfo = Main.applicationInfo.getInfo();
+        String[] masterPortAndHost = new String[]{};
         String role = "master";
         if (parameters.containsKey("--replicaof")) {
+             masterPortAndHost = parameters.get("--replicaof").split(" ");
             role = "slave";
+
         } else {
             applicationInfo.put("master_repl_offset", "0");
             applicationInfo.put("master_replid", "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb");
         }
         applicationInfo.put("role", role);
+        return masterPortAndHost;
     }
 
     private static int getPortFromApplicationParameters(Map<String, String> parameters, int port) {
