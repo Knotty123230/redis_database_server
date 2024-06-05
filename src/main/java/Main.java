@@ -28,18 +28,15 @@ public class Main {
 
 
     private static void checkConnection(String[] masterPortAndHost, int port) {
-        if (masterPortAndHost.length == 0) {
-            throw new RuntimeException("Master is not connected");
+        if (masterPortAndHost.length > 0) {
+            try {
+                ReplicaConnectionService replicaConnectionService = new ReplicaConnectionService(masterPortAndHost, port);
+                replicaConnectionService.getConnection();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-        try {
-            ReplicaConnectionService replicaConnectionService = new ReplicaConnectionService(masterPortAndHost, port);
-            replicaConnectionService.getConnection();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
     }
-
     private static String[] findRole(Map<String, String> parameters) {
         Map<String, String> applicationInfo = Main.applicationInfo.getInfo();
         String[] masterPortAndHost = new String[]{};
@@ -55,7 +52,6 @@ public class Main {
         applicationInfo.put("role", role);
         return masterPortAndHost;
     }
-
     private static int getPortFromApplicationParameters(Map<String, String> parameters, int port) {
         if (parameters.containsKey("--port")) {
             port = Integer.parseInt(parameters.get("--port"));
