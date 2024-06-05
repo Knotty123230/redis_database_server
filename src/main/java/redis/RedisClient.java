@@ -50,6 +50,7 @@ public class RedisClient implements Runnable {
     private synchronized byte[] processCommand(List<String> commands) {
         String remove = commands.removeFirst();
         Command command = CommandUtil.getCommand(remove);
+        System.out.println("RedisClient processCommand: " + command.getValue());
         CommandFactory commandFactory = new CommandFactory(command);
         CommandProcessor commandProcessor = commandFactory.getInstance();
         return commandProcessor.processCommand(commands);

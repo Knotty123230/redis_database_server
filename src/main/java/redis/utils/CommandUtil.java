@@ -14,6 +14,10 @@ public class CommandUtil {
             return Command.GET;
         }else if (remove.toLowerCase().contains(Command.INFO.getValue().toLowerCase())) {
             return Command.INFO;
+        } else if (remove.toLowerCase().contains(Command.REPLCONF.getValue()) || remove.equalsIgnoreCase(Command.REPLCONF.getValue())) {
+            return Command.REPLCONF;
+        } else if (remove.toLowerCase().contains(Command.FULLRESYNC.getValue()) || remove.equalsIgnoreCase(Command.FULLRESYNC.getValue())) {
+            return Command.FULLRESYNC;
         } else return null;
     }
 }
