@@ -54,6 +54,11 @@ public class ReplicaConnectionService {
             if (!line.isEmpty()){
                 outputStream.write(commandParser.getResponseFromCommandArray(List.of(Command.REPLCONF.getValue(), "capa", "npsync2")).getBytes());
             }
+            String respCapa = bufferedReader.readLine();
+            if (!respCapa.isEmpty()){
+                outputStream.write(commandParser.getResponseFromCommandArray(List.of(Command.PSYNC.getValue(),"?", "-1")).getBytes());
+            }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -4,7 +4,7 @@ public enum Command {
     PING("PING"),
     PONG("PONG"),
     ECHO("ECHO"),
-    SET("SET"), GET("GET"), PX("PX"), REPLICATION("REPLICATION"), INFO("INFO"), REPLCONF("REPLCONF");
+    SET("SET"), GET("GET"), PX("PX"), REPLICATION("REPLICATION"), INFO("INFO"), REPLCONF("REPLCONF"), PSYNC("PSYNC"), FULLRESYNC("FULLRESYNC");
     private final String value;
 
     Command(String value) {
