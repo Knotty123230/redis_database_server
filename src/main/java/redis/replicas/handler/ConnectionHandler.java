@@ -60,7 +60,6 @@ public class ConnectionHandler {
     private String getReplconfResp(BufferedReader bufferedReader, OutputStream outputStream) throws IOException {
         outputStream.write(commandParser.getResponseFromCommandArray(List.of(Command.REPLCONF.getValue(), "listening-port", String.valueOf(port))).getBytes());
         outputStream.flush();
-        String replconfResp = bufferedReader.readLine();
-        return replconfResp;
+        return bufferedReader.readLine();
     }
 }

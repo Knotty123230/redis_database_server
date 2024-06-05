@@ -18,6 +18,8 @@ public class CommandUtil {
             return Command.REPLCONF;
         } else if (remove.toLowerCase().contains(Command.FULLRESYNC.getValue()) || remove.equalsIgnoreCase(Command.FULLRESYNC.getValue())) {
             return Command.FULLRESYNC;
+        } else if (remove.toLowerCase().contains(Command.PSYNC.getValue()) || remove.equalsIgnoreCase(Command.PSYNC.getValue())) {
+            return Command.PSYNC;
         } else return null;
     }
 }

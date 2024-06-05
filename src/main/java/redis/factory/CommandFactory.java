@@ -24,7 +24,7 @@ public class CommandFactory {
             return new InfoCommandProcessor();
         } else if (command.equals(Command.REPLCONF)) {
             return new ReplConfCommandProcessor();
-        } else if (command.equals(Command.FULLRESYNC)) {
+        } else if (command.equals(Command.PSYNC)) {
             return new FullResyncCommandProcessor();
         }
         return null;

@@ -14,6 +14,6 @@ public class FullResyncCommandProcessor implements CommandProcessor {
 
     @Override
     public byte[] processCommand(List<String> command) {
-        return ("+" + Command.FULLRESYNC.getValue() + applicationInfo.getInfo().get("master_replid") + "0\r\n").getBytes();
+        return ("+" + Command.FULLRESYNC.getValue() + " " + applicationInfo.getInfo().get("master_replid") + " 0\r\n").getBytes();
     }
 }
