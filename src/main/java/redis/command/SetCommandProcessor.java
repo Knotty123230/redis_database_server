@@ -12,6 +12,7 @@ public class SetCommandProcessor implements CommandProcessor {
 
     @Override
     public byte[] processCommand(List<String> commands) {
+
         System.out.printf("Processing SET command %s%n", commands);
         Map<String, String> commandsMap = new HashMap<>();
 
@@ -20,8 +21,8 @@ public class SetCommandProcessor implements CommandProcessor {
         }
 
         String value = commands.get(1);
-        String expiration = commandsMap.get(Command.PX.getValue().toLowerCase());
 
+        String expiration = commandsMap.get(Command.PX.getValue().toLowerCase());
         if (expiration != null) {
             try {
                 Long expirationTime = Long.parseLong(expiration);

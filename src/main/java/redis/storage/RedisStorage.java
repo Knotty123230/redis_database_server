@@ -14,6 +14,7 @@ public class RedisStorage {
 
     public static RedisStorage getInstance() {
         return redisStorage;
+
     }
 
     public void save(String key, String value) {

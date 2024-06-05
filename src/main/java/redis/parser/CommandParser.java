@@ -25,4 +25,12 @@ public class CommandParser {
             throw new RuntimeException(e);
         }
     }
+    public String getResponseFromCommandArray(List<String> command){
+        StringBuilder sb = new StringBuilder();
+        sb.append("*").append(command.size()).append("\r\n");
+        for (String s : command) {
+            sb.append("$").append(s.length()).append("\r\n").append(s).append("\r\n");
+        }
+        return sb.toString();
+    }
 }

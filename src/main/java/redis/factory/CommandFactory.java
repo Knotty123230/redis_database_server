@@ -22,6 +22,8 @@ public class CommandFactory {
             return new GetCommandProcessor();
         }else if (command.equals(Command.INFO)){
             return new InfoCommandProcessor();
+        } else if (command.equals(Command.REPLCONF)) {
+            return new ReplConfCommandProcessor();
         }
         return null;
     }

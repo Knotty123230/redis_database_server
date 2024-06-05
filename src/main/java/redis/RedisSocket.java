@@ -19,7 +19,6 @@ public class RedisSocket extends Thread {
     @Override
     public void run() {
         try {
-
             serverSocket.setReuseAddress(true);
             while (!serverSocket.isClosed()) {
                 Socket clientSocket = serverSocket.accept();

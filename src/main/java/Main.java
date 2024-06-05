@@ -14,35 +14,30 @@ public class Main {
         Map<String, String> parameters = extractArgs(args);
         int port = 6379;
         String[] masterPortAndHost = findRole(parameters);
-        checkConnection(masterPortAndHost);
         port = getPortFromApplicationParameters(parameters, port);
-        ServerSocket serverSocket = null;
+        checkConnection(masterPortAndHost, port);
+        ServerSocket serverSocket;
         try {
             serverSocket = new ServerSocket(port);
             Thread thread = new Thread(new RedisSocket(serverSocket));
             thread.start();
         } catch (IOException e) {
-            try {
-                if (serverSocket != null) {
-                    serverSocket.close();
-                }
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private static void checkConnection(String[] masterPortAndHost, int port) {
+        if (masterPortAndHost.length == 0) {
+            throw new RuntimeException("Master is not connected");
+        }
+        try {
+            ReplicaConnectionService replicaConnectionService = new ReplicaConnectionService(masterPortAndHost, port);
+            replicaConnectionService.getConnection();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-    }
-
-    private static void checkConnection(String[] masterPortAndHost) {
-        if (masterPortAndHost.length > 0) {
-            try {
-                ReplicaConnectionService replicaConnectionService = new ReplicaConnectionService(masterPortAndHost);
-                replicaConnectionService.getConnection();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     private static String[] findRole(Map<String, String> parameters) {
@@ -50,7 +45,7 @@ public class Main {
         String[] masterPortAndHost = new String[]{};
         String role = "master";
         if (parameters.containsKey("--replicaof")) {
-             masterPortAndHost = parameters.get("--replicaof").split(" ");
+            masterPortAndHost = parameters.get("--replicaof").split(" ");
             role = "slave";
 
         } else {
@@ -65,7 +60,6 @@ public class Main {
         if (parameters.containsKey("--port")) {
             port = Integer.parseInt(parameters.get("--port"));
         }
-
         return port;
     }
 
