@@ -19,7 +19,7 @@ public class ReplicaSender implements Runnable {
         this.connectedReplicas = new CopyOnWriteArrayList<>();
     }
 
-    public static ReplicaSender getInstance() {
+    public static synchronized ReplicaSender getInstance() {
         if (replicaSender == null) {
             replicaSender = new ReplicaSender();
         }
@@ -31,28 +31,39 @@ public class ReplicaSender implements Runnable {
     public void run() {
         while (true) {
             if (!commands.isEmpty() && !connectedReplicas.isEmpty()) {
-                for (ConnectedReplica connectedReplica : connectedReplicas) {
-                    OutputStream os = connectedReplica.getOs();
-                    for (int i = 0; i < commands.size(); i++) {
-                        String command = commands.poll();
-                        if (command.toLowerCase().contains(Command.SET.getValue().toLowerCase())) {
-                            try {
-                                os.write(command.getBytes());
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
+                for (String command : commands) {
+                    for (ConnectedReplica connectedReplica : connectedReplicas) {
+                        if (connectedReplica != null) {
+                            writeCommandToReplica(command, connectedReplica);
                         }
                     }
                 }
-
+                commands.clear();
             }
-
         }
     }
 
+    private void writeCommandToReplica(String command, ConnectedReplica connectedReplica) {
+        OutputStream os = connectedReplica.getOs();
+        if (command.toLowerCase().contains(Command.SET.getValue().toLowerCase())) {
+            try {
+                os.write(command.getBytes());
+                os.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     public Queue<String> getCommands() {
         return commands;
+    }
+    public void addCommand(String command){
+        commands.add(command);
+    }
+    public void addConnectedReplica(OutputStream os){
+        ConnectedReplica connectedReplica = new ConnectedReplica(os);
+        connectedReplicas.add(connectedReplica);
     }
 
     public List<ConnectedReplica> getConnectedReplicas() {

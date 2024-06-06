@@ -18,12 +18,11 @@ public class RedisClient implements Runnable {
     private final Socket socket;
     private final CommandParser commandParser = new CommandParser();
     private final ReplicaSender replicaSender;
-    private final ApplicationInfo applicationInfo;
 
     public RedisClient(Socket socket) {
         this.socket = socket;
         this.replicaSender = ReplicaSender.getInstance();
-        this.applicationInfo = ApplicationInfo.getInstance();
+        ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
         if (applicationInfo.getInfo().get("role").equalsIgnoreCase(Role.MASTER.name())) {
             Thread thread = new Thread(replicaSender);
             thread.start();
@@ -35,8 +34,7 @@ public class RedisClient implements Runnable {
         try (OutputStream outputStream = socket.getOutputStream();
              InputStream inputStream = socket.getInputStream();
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
-            System.out.println("HANDLE CLIENT PORT: " + socket.getPort());
-            handleClient(bufferedReader, outputStream);
+             handleClient(bufferedReader, outputStream);
         } catch (IOException e) {
             System.out.println("IOException while handling client: " + e.getMessage());
         }
@@ -45,20 +43,17 @@ public class RedisClient implements Runnable {
     private void handleClient(BufferedReader bufferedReader, OutputStream outputStream) throws IOException {
         String line;
         while ((line = bufferedReader.readLine()) != null) {
-            System.out.println("FETCHING LINE CLIENT: " + line);
             if (line.isEmpty()) continue;
-            List<String> list = commandParser.parseCommand(bufferedReader, line);
-            sendToReplicas(list);
-            System.out.println("PARSED COMMANDS : " + list);
-            processCommand(list, outputStream);
+            List<String> parsedCommands = commandParser.parseCommand(bufferedReader, line);
+            addCommandThanSendsToReplica(parsedCommands);
+            System.out.println("PARSED COMMANDS : " + parsedCommands);
+            processCommand(parsedCommands, outputStream);
         }
     }
 
-    private void sendToReplicas(List<String> command) {
-        if (!applicationInfo.getInfo().get("role").equalsIgnoreCase("master")) return;
-        System.out.println("METHOD SEND TO REPLICAS PROCESS COMMAND: " + command);
-        replicaSender.getCommands().add(commandParser.getResponseFromCommandArray(command));
-
+    private void addCommandThanSendsToReplica(List<String> command) {
+        System.out.println("ADD commands that sends to replica: " + command);
+        replicaSender.addCommand(commandParser.getResponseFromCommandArray(command));
     }
 
 

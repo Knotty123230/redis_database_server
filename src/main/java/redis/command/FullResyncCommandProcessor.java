@@ -26,8 +26,7 @@ public class FullResyncCommandProcessor implements CommandProcessor {
 
     @Override
     public void processCommand(List<String> command, OutputStream os) {
-        ConnectedReplica connectedReplica = new ConnectedReplica(os);
-        replicaSender.getConnectedReplicas().add(connectedReplica);
+        replicaSender.addConnectedReplica(os);
         synchronized (this) {
             byte[] decode;
             File file = new File("rdb.rdb");
