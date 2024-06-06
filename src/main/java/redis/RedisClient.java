@@ -3,8 +3,9 @@ package redis;
 import redis.command.CommandProcessor;
 import redis.command.model.Command;
 import redis.factory.CommandFactory;
-import redis.model.ConnectedReplica;
+import redis.model.Role;
 import redis.parser.CommandParser;
+import redis.service.ApplicationInfo;
 import redis.service.ReplicaSender;
 import redis.utils.CommandUtil;
 
@@ -17,10 +18,16 @@ public class RedisClient implements Runnable {
     private final Socket socket;
     private final CommandParser commandParser = new CommandParser();
     private final ReplicaSender replicaSender;
+    private final ApplicationInfo applicationInfo;
 
     public RedisClient(Socket socket) {
         this.socket = socket;
-        this.replicaSender = new ReplicaSender();
+        this.replicaSender = ReplicaSender.getInstance();
+        this.applicationInfo = ApplicationInfo.getInstance();
+        if (applicationInfo.getInfo().get("role").equalsIgnoreCase(Role.MASTER.name())) {
+            Thread thread = new Thread(replicaSender);
+            thread.start();
+        }
     }
 
     @Override
@@ -41,21 +48,17 @@ public class RedisClient implements Runnable {
             System.out.println("FETCHING LINE CLIENT: " + line);
             if (line.isEmpty()) continue;
             List<String> list = commandParser.parseCommand(bufferedReader, line);
-            sendToReplicas(line);
+            sendToReplicas(list);
             System.out.println("PARSED COMMANDS : " + list);
             processCommand(list, outputStream);
         }
     }
 
-    private void sendToReplicas(String list) {
-        List<ConnectedReplica> connectedReplicas = replicaSender.getConnectedReplicas();
-        if (!connectedReplicas.isEmpty()){
-            try {
-                replicaSender.sendToReplicas(list);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+    private void sendToReplicas(List<String> command) {
+        if (!applicationInfo.getInfo().get("role").equalsIgnoreCase("master")) return;
+        System.out.println("METHOD SEND TO REPLICAS PROCESS COMMAND: " + command);
+        replicaSender.getCommands().add(commandParser.getResponseFromCommandArray(command));
+
     }
 
 
@@ -63,9 +66,9 @@ public class RedisClient implements Runnable {
         String remove = commands.removeFirst();
         Command command = CommandUtil.getCommand(remove);
         System.out.println("RedisClient processCommand: " + Objects.requireNonNull(command).getValue());
-        CommandFactory commandFactory = new CommandFactory(command, socket);
+        CommandFactory commandFactory = new CommandFactory(command, replicaSender);
         CommandProcessor commandProcessor = commandFactory.getInstance();
-         commandProcessor.processCommand(commands, os);
+        commandProcessor.processCommand(commands, os);
     }
 
 

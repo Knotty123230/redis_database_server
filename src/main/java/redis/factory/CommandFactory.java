@@ -1,17 +1,16 @@
 package redis.factory;
 
-import redis.command.model.Command;
 import redis.command.*;
-
-import java.net.Socket;
+import redis.command.model.Command;
+import redis.service.ReplicaSender;
 
 public class CommandFactory {
     private final Command command;
-    private final Socket socket;
+    private final ReplicaSender replicaSender;
 
-    public CommandFactory(Command command, Socket socket) {
+    public CommandFactory(Command command, ReplicaSender replicaSender) {
         this.command = command;
-        this.socket = socket;
+        this.replicaSender = replicaSender;
     }
 
     public CommandProcessor getInstance() {
@@ -24,12 +23,12 @@ public class CommandFactory {
             return new SetCommandProcessor();
         } else if (command.equals(Command.GET)) {
             return new GetCommandProcessor();
-        }else if (command.equals(Command.INFO)){
+        } else if (command.equals(Command.INFO)) {
             return new InfoCommandProcessor();
         } else if (command.equals(Command.REPLCONF)) {
             return new ReplConfCommandProcessor();
         } else if (command.equals(Command.PSYNC)) {
-            return new FullResyncCommandProcessor(socket);
+            return new FullResyncCommandProcessor(replicaSender);
         }
         return null;
     }

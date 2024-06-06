@@ -12,7 +12,7 @@ public class CommandUtil {
             return Command.SET;
         } else if (remove.toLowerCase().contains(Command.GET.getValue().toLowerCase())) {
             return Command.GET;
-        }else if (remove.toLowerCase().contains(Command.INFO.getValue().toLowerCase())) {
+        } else if (remove.toLowerCase().contains(Command.INFO.getValue().toLowerCase())) {
             return Command.INFO;
         } else if (remove.toLowerCase().contains(Command.REPLCONF.getValue()) || remove.equalsIgnoreCase(Command.REPLCONF.getValue())) {
             return Command.REPLCONF;

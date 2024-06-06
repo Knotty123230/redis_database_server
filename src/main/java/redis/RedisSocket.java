@@ -1,12 +1,8 @@
 package redis;
 
-import redis.model.Role;
-import redis.service.ApplicationInfo;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class RedisSocket extends Thread {
     private final ServerSocket serverSocket;

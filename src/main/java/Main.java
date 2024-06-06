@@ -37,6 +37,7 @@ public class Main {
             }
         }
     }
+
     private static String[] findRole(Map<String, String> parameters) {
         Map<String, String> applicationInfo = Main.applicationInfo.getInfo();
         String[] masterPortAndHost = new String[]{};
@@ -52,6 +53,7 @@ public class Main {
         applicationInfo.put("role", role);
         return masterPortAndHost;
     }
+
     private static int getPortFromApplicationParameters(Map<String, String> parameters, int port) {
         if (parameters.containsKey("--port")) {
             port = Integer.parseInt(parameters.get("--port"));

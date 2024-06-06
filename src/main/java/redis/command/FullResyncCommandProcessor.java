@@ -3,11 +3,11 @@ package redis.command;
 import redis.command.model.Command;
 import redis.model.ConnectedReplica;
 import redis.service.ApplicationInfo;
+import redis.service.ReplicaSender;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
@@ -17,17 +17,18 @@ import java.util.stream.Stream;
 
 public class FullResyncCommandProcessor implements CommandProcessor {
     private final ApplicationInfo applicationInfo;
-    private final Socket socket;
+    private final ReplicaSender replicaSender;
 
-    public FullResyncCommandProcessor(Socket socket) {
+    public FullResyncCommandProcessor(ReplicaSender replicaSender) {
         this.applicationInfo = ApplicationInfo.getInstance();
-        this.socket = socket;
+        this.replicaSender = replicaSender;
     }
 
     @Override
-    public  void processCommand(List<String> command, OutputStream os) {
-        ConnectedReplica connectedReplica = new ConnectedReplica(socket.getPort(), socket.getInetAddress().getHostAddress());
-        synchronized (this){
+    public void processCommand(List<String> command, OutputStream os) {
+        ConnectedReplica connectedReplica = new ConnectedReplica(os);
+        replicaSender.getConnectedReplicas().add(connectedReplica);
+        synchronized (this) {
             byte[] decode;
             File file = new File("rdb.rdb");
             try (Stream<String> stringStream = Files.lines(Path.of(file.getPath()))) {
@@ -38,10 +39,8 @@ public class FullResyncCommandProcessor implements CommandProcessor {
             }
             try {
                 os.write(("+" + Command.FULLRESYNC.getValue() + " " + applicationInfo.getInfo().get("master_replid") + " 0\r\n").getBytes());
-                os.flush();
                 os.write(("$" + decode.length + "\r\n").getBytes());
                 os.write(decode);
-                os.flush();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -25,7 +25,8 @@ public class CommandParser {
             throw new RuntimeException(e);
         }
     }
-    public String getResponseFromCommandArray(List<String> command){
+
+    public String getResponseFromCommandArray(List<String> command) {
         StringBuilder sb = new StringBuilder();
         sb.append("*").append(command.size()).append("\r\n");
         for (String s : command) {

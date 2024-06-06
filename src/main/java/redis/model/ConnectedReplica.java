@@ -1,19 +1,15 @@
 package redis.model;
 
+import java.io.OutputStream;
+
 public class ConnectedReplica {
-    private final Integer replicaPort;
-    private final String replicaHost;
+    private final OutputStream os;
 
-    public ConnectedReplica(Integer replicaPort, String replicaHost) {
-        this.replicaPort = replicaPort;
-        this.replicaHost = replicaHost;
+    public ConnectedReplica(OutputStream os) {
+        this.os = os;
     }
 
-    public Integer getReplicaPort() {
-        return replicaPort;
-    }
-
-    public String getReplicaHost() {
-        return replicaHost;
+    public OutputStream getOs() {
+        return os;
     }
 }

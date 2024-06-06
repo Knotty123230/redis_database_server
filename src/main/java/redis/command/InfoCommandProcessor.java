@@ -24,7 +24,7 @@ public class InfoCommandProcessor implements CommandProcessor {
                     .map(data -> data.getKey() + ":" + data.getValue())
                     .collect(Collectors.joining());
             try {
-                os.write( ResponseUtil.getResponse(response));
+                os.write(ResponseUtil.getResponse(response));
                 os.flush();
             } catch (IOException e) {
                 throw new RuntimeException(e);
