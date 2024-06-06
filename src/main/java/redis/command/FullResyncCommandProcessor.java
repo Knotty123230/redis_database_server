@@ -1,7 +1,6 @@
 package redis.command;
 
 import redis.command.model.Command;
-import redis.model.ConnectedReplica;
 import redis.service.ApplicationInfo;
 import redis.service.ReplicaSender;
 
@@ -26,8 +25,8 @@ public class FullResyncCommandProcessor implements CommandProcessor {
 
     @Override
     public void processCommand(List<String> command, OutputStream os) {
-        replicaSender.addConnectedReplica(os);
         synchronized (this) {
+            replicaSender.addConnectedReplica(os);
             byte[] decode;
             File file = new File("rdb.rdb");
             try (Stream<String> stringStream = Files.lines(Path.of(file.getPath()))) {
