@@ -58,10 +58,10 @@ public class ReplicaSender implements Runnable {
     public Queue<String> getCommands() {
         return commands;
     }
-    public void addCommand(String command){
+    public synchronized void addCommand(String command){
         commands.add(command);
     }
-    public void addConnectedReplica(OutputStream os){
+    public synchronized void addConnectedReplica(OutputStream os){
         ConnectedReplica connectedReplica = new ConnectedReplica(os);
         connectedReplicas.add(connectedReplica);
     }
