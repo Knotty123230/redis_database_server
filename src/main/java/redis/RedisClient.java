@@ -4,12 +4,9 @@ import redis.command.CommandProcessor;
 import redis.command.model.Command;
 import redis.factory.CommandFactory;
 import redis.model.ConnectedReplica;
-import redis.model.Role;
 import redis.parser.CommandParser;
-import redis.service.ApplicationInfo;
 import redis.service.ReplicaSender;
 import redis.utils.CommandUtil;
-import redis.utils.ResponseUtil;
 
 import java.io.*;
 import java.net.Socket;
@@ -44,17 +41,17 @@ public class RedisClient implements Runnable {
             System.out.println("FETCHING LINE CLIENT: " + line);
             if (line.isEmpty()) continue;
             List<String> list = commandParser.parseCommand(bufferedReader, line);
-            sendToReplicas(list);
+            sendToReplicas(line);
             System.out.println("PARSED COMMANDS : " + list);
             processCommand(list, outputStream);
         }
     }
 
-    private void sendToReplicas(List<String> list) {
+    private void sendToReplicas(String list) {
         List<ConnectedReplica> connectedReplicas = replicaSender.getConnectedReplicas();
         if (!connectedReplicas.isEmpty()){
             try {
-                replicaSender.sendToReplicas(list.removeFirst());
+                replicaSender.sendToReplicas(list);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
