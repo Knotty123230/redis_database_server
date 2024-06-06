@@ -31,15 +31,18 @@ public class ReplicaSender implements Runnable {
     public void run() {
         while (true) {
             if (!commands.isEmpty() && !connectedReplicas.isEmpty()) {
-                for (String command : commands) {
-                    for (ConnectedReplica connectedReplica : connectedReplicas) {
-                        if (connectedReplica != null) {
-                            writeCommandToReplica(command, connectedReplica);
-                        }
+                for (ConnectedReplica connectedReplica : connectedReplicas) {
+                    if (connectedReplica == null) continue;
+                    for (int i = 0; i < commands.size(); i++) {
+                        String command = commands.poll();
+                        writeCommandToReplica(command, connectedReplica);
                     }
                 }
-                commands.clear();
             }
+
+
+            commands.clear();
+
         }
     }
 
@@ -58,10 +61,12 @@ public class ReplicaSender implements Runnable {
     public Queue<String> getCommands() {
         return commands;
     }
-    public synchronized void addCommand(String command){
+
+    public synchronized void addCommand(String command) {
         commands.add(command);
     }
-    public synchronized void addConnectedReplica(OutputStream os){
+
+    public synchronized void addConnectedReplica(OutputStream os) {
         ConnectedReplica connectedReplica = new ConnectedReplica(os);
         connectedReplicas.add(connectedReplica);
     }
