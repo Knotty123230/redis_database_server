@@ -3,6 +3,8 @@ package redis.command;
 import redis.command.model.Command;
 import redis.storage.RedisStorage;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +13,7 @@ public class SetCommandProcessor implements CommandProcessor {
     private final RedisStorage redisStorage = RedisStorage.getInstance();
 
     @Override
-    public byte[] processCommand(List<String> commands) {
+    public void processCommand(List<String> commands, OutputStream os) {
 
         System.out.printf("Processing SET command %s%n", commands);
         Map<String, String> commandsMap = new HashMap<>();
@@ -28,12 +30,17 @@ public class SetCommandProcessor implements CommandProcessor {
                 Long expirationTime = Long.parseLong(expiration);
                 redisStorage.save(commands.getFirst().toLowerCase(), value, expirationTime);
             } catch (NumberFormatException e) {
-                return "-ERR invalid expiration time\r\n".getBytes();
+                System.out.println("NumberFormatException:  " + e.getMessage());
             }
         } else {
             redisStorage.save(commands.getFirst().toLowerCase(), value);
         }
 
-        return "+OK\r\n".getBytes();
+        try {
+            os.write("+OK\r\n".getBytes());
+            os.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

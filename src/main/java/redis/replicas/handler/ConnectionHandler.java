@@ -53,12 +53,23 @@ public class ConnectionHandler {
 
     private String sendReplConfCapa(BufferedReader bufferedReader, OutputStream outputStream) throws IOException {
 
-        outputStream.write(commandParser.getResponseFromCommandArray(List.of(Command.REPLCONF.getValue(), "capa", "npsync2")).getBytes());
+        outputStream.write(commandParser.getResponseFromCommandArray(List.of(
+                Command.REPLCONF.getValue(),
+                "capa",
+                "npsync2")
+                ).getBytes()
+        );
+        outputStream.flush();
         return bufferedReader.readLine();
     }
 
     private String getReplconfResp(BufferedReader bufferedReader, OutputStream outputStream) throws IOException {
-        outputStream.write(commandParser.getResponseFromCommandArray(List.of(Command.REPLCONF.getValue(), "listening-port", String.valueOf(port))).getBytes());
+        outputStream.write(commandParser.getResponseFromCommandArray(List.of(
+                Command.REPLCONF.getValue(),
+                "listening-port",
+                String.valueOf(port))
+                ).getBytes()
+        );
         outputStream.flush();
         return bufferedReader.readLine();
     }
