@@ -3,11 +3,15 @@ package redis.factory;
 import redis.command.model.Command;
 import redis.command.*;
 
+import java.net.Socket;
+
 public class CommandFactory {
     private final Command command;
+    private final Socket socket;
 
-    public CommandFactory(Command command) {
+    public CommandFactory(Command command, Socket socket) {
         this.command = command;
+        this.socket = socket;
     }
 
     public CommandProcessor getInstance() {
@@ -25,7 +29,7 @@ public class CommandFactory {
         } else if (command.equals(Command.REPLCONF)) {
             return new ReplConfCommandProcessor();
         } else if (command.equals(Command.PSYNC)) {
-            return new FullResyncCommandProcessor();
+            return new FullResyncCommandProcessor(socket);
         }
         return null;
     }
