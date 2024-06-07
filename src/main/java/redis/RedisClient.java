@@ -24,6 +24,7 @@ public class RedisClient implements Runnable {
         this.replicaSender = ReplicaSender.getInstance();
         ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
         if (applicationInfo.getInfo().get("role").equalsIgnoreCase(Role.MASTER.name())) {
+            System.out.println("Cleate client for master node: " + socket.getLocalSocketAddress());
             Thread thread = new Thread(replicaSender);
             thread.start();
         }
@@ -34,7 +35,7 @@ public class RedisClient implements Runnable {
         try (OutputStream outputStream = socket.getOutputStream();
              InputStream inputStream = socket.getInputStream();
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
-             handleClient(bufferedReader, outputStream);
+            handleClient(bufferedReader, outputStream);
         } catch (IOException e) {
             System.out.println("IOException while handling client: " + e.getMessage());
         }
@@ -45,13 +46,13 @@ public class RedisClient implements Runnable {
         while ((line = bufferedReader.readLine()) != null) {
             if (line.isEmpty()) continue;
             List<String> parsedCommands = commandParser.parseCommand(bufferedReader, line);
-            addCommandThanSendsToReplica(parsedCommands);
+            addCommandThanSendsToReplica(parsedCommands, outputStream);
             System.out.println("PARSED COMMANDS : " + parsedCommands);
             processCommand(parsedCommands, outputStream);
         }
     }
 
-    private void addCommandThanSendsToReplica(List<String> command) {
+    private void addCommandThanSendsToReplica(List<String> command, OutputStream outputStream) {
         System.out.println("ADD commands that sends to replica: " + command);
         replicaSender.addCommand(commandParser.getResponseFromCommandArray(command));
     }

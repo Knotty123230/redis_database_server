@@ -5,18 +5,20 @@ import redis.model.ConnectedReplica;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ReplicaSender implements Runnable {
     private static ReplicaSender replicaSender;
-    private final List<ConnectedReplica> connectedReplicas;
-    private final Queue<String> commands = new ConcurrentLinkedQueue<>();
+    private final Queue<ConnectedReplica> connectedReplicas;
+    private final Queue<String> commands;
 
     private ReplicaSender() {
-        this.connectedReplicas = new CopyOnWriteArrayList<>();
+        this.connectedReplicas = new LinkedBlockingQueue<>();
+        this.commands = new ConcurrentLinkedQueue<>();
     }
 
     public static synchronized ReplicaSender getInstance() {
@@ -30,48 +32,33 @@ public class ReplicaSender implements Runnable {
     @Override
     public void run() {
         while (true) {
-            if (!commands.isEmpty() && !connectedReplicas.isEmpty()) {
+            if (!commands.isEmpty()){
+                String poll = commands.poll();
                 for (ConnectedReplica connectedReplica : connectedReplicas) {
-                    if (connectedReplica == null) continue;
-                    for (int i = 0; i < commands.size(); i++) {
-                        String command = commands.poll();
-                        writeCommandToReplica(command, connectedReplica);
+                    OutputStream outputStream = connectedReplica.getOs();
+                    try {
+                        outputStream.write(poll.getBytes());
+                        outputStream.flush();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             }
-
-
-            commands.clear();
-
         }
     }
 
-    private void writeCommandToReplica(String command, ConnectedReplica connectedReplica) {
-        OutputStream os = connectedReplica.getOs();
+    public void addCommand(String command) {
         if (command.toLowerCase().contains(Command.SET.getValue().toLowerCase())) {
-            try {
-                os.write(command.getBytes());
-                os.flush();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            System.out.println("COMMANDS SIZE:" + commands.size());
+            System.out.println("CONNECTED REPLICAS SIZE:" + connectedReplicas.size());
+            commands.add(command);
         }
     }
 
-    public Queue<String> getCommands() {
-        return commands;
-    }
-
-    public synchronized void addCommand(String command) {
-        commands.add(command);
-    }
-
-    public synchronized void addConnectedReplica(OutputStream os) {
-        ConnectedReplica connectedReplica = new ConnectedReplica(os);
+    public void addConnection(OutputStream outputStream) {
+        ConnectedReplica connectedReplica = new ConnectedReplica(outputStream);
         connectedReplicas.add(connectedReplica);
     }
 
-    public List<ConnectedReplica> getConnectedReplicas() {
-        return connectedReplicas;
-    }
+
 }
