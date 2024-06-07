@@ -5,9 +5,7 @@ import redis.model.ConnectedReplica;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.LinkedHashSet;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -32,7 +30,7 @@ public class ReplicaSender implements Runnable {
     @Override
     public void run() {
         while (true) {
-            if (!commands.isEmpty()){
+            if (!commands.isEmpty()) {
                 String poll = commands.poll();
                 for (ConnectedReplica connectedReplica : connectedReplicas) {
                     OutputStream outputStream = connectedReplica.getOs();
@@ -49,8 +47,6 @@ public class ReplicaSender implements Runnable {
 
     public void addCommand(String command) {
         if (command.toLowerCase().contains(Command.SET.getValue().toLowerCase())) {
-            System.out.println("COMMANDS SIZE:" + commands.size());
-            System.out.println("CONNECTED REPLICAS SIZE:" + connectedReplicas.size());
             commands.add(command);
         }
     }
