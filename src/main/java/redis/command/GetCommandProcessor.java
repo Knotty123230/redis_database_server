@@ -16,7 +16,7 @@ public class GetCommandProcessor implements CommandProcessor {
         System.out.printf("Processing GET command %s%n", commands);
         try {
             String response = storage.getCommand(commands.getFirst().toLowerCase());
-            if (response.isEmpty() || response.isBlank()) {
+            if (response == null || response.isEmpty() || response.isBlank()) {
                 os.write("$-1\r\n".getBytes());
                 os.flush();
                 return;

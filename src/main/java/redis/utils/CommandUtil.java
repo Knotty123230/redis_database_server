@@ -4,6 +4,7 @@ import redis.command.model.Command;
 
 public class CommandUtil {
     public static Command getCommand(String remove) {
+        System.out.println("CommandUtil : getCommand: " + remove);
         if (remove.toLowerCase().contains(Command.ECHO.getValue().toLowerCase())) {
             return Command.ECHO;
         } else if (remove.toLowerCase().contains(Command.PING.getValue().toLowerCase())) {
@@ -14,9 +15,9 @@ public class CommandUtil {
             return Command.GET;
         } else if (remove.toLowerCase().contains(Command.INFO.getValue().toLowerCase())) {
             return Command.INFO;
-        } else if (remove.toLowerCase().contains(Command.REPLCONF.getValue()) || remove.equalsIgnoreCase(Command.REPLCONF.getValue())) {
+        } else if (remove.toLowerCase().contains(Command.REPLCONF.getValue().toLowerCase()) || remove.equalsIgnoreCase(Command.REPLCONF.getValue())) {
             return Command.REPLCONF;
-        } else if (remove.toLowerCase().contains(Command.FULLRESYNC.getValue()) || remove.equalsIgnoreCase(Command.FULLRESYNC.getValue())) {
+        } else if (remove.toLowerCase().contains(Command.FULLRESYNC.getValue().toLowerCase()) || remove.equalsIgnoreCase(Command.FULLRESYNC.getValue())) {
             return Command.FULLRESYNC;
         } else if (remove.toLowerCase().contains(Command.PSYNC.getValue()) || remove.equalsIgnoreCase(Command.PSYNC.getValue())) {
             return Command.PSYNC;

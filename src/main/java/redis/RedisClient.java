@@ -1,5 +1,6 @@
 package redis;
 
+import redis.command.CommandHandler;
 import redis.command.CommandProcessor;
 import redis.command.model.Command;
 import redis.factory.CommandFactory;
@@ -18,6 +19,7 @@ public class RedisClient implements Runnable {
     private final Socket socket;
     private final CommandParser commandParser = new CommandParser();
     private final ReplicaSender replicaSender;
+    private final   CommandHandler commandHandler;
 
     public RedisClient(Socket socket) {
         this.socket = socket;
@@ -28,6 +30,7 @@ public class RedisClient implements Runnable {
             Thread thread = new Thread(replicaSender);
             thread.start();
         }
+        this.commandHandler = new CommandHandler(replicaSender);
     }
 
     @Override
@@ -46,26 +49,19 @@ public class RedisClient implements Runnable {
         while ((line = bufferedReader.readLine()) != null) {
             if (line.isEmpty()) continue;
             List<String> parsedCommands = commandParser.parseCommand(bufferedReader, line);
-            addCommandThanSendsToReplica(parsedCommands, outputStream);
+            addCommandThanSendsToReplica(parsedCommands);
             System.out.println("PARSED COMMANDS : " + parsedCommands);
-            processCommand(parsedCommands, outputStream);
+            commandHandler.processCommand(parsedCommands, outputStream);
         }
     }
 
-    private void addCommandThanSendsToReplica(List<String> command, OutputStream outputStream) {
+    private void addCommandThanSendsToReplica(List<String> command) {
         System.out.println("ADD commands that sends to replica: " + command);
         replicaSender.addCommand(commandParser.getResponseFromCommandArray(command));
     }
 
 
-    private synchronized void processCommand(List<String> commands, OutputStream os) {
-        String remove = commands.removeFirst();
-        Command command = CommandUtil.getCommand(remove);
-        System.out.println("RedisClient processCommand: " + Objects.requireNonNull(command).getValue());
-        CommandFactory commandFactory = new CommandFactory(command, replicaSender);
-        CommandProcessor commandProcessor = commandFactory.getInstance();
-        commandProcessor.processCommand(commands, os);
-    }
+
 
 
 }

@@ -22,17 +22,25 @@ public class ConnectionHandler {
     }
 
     public void handleConnection() throws IOException {
-        try (OutputStream outputStream = socket.getOutputStream();
-             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-            byte[] bytes = commandParser.getResponseFromCommandArray(List.of(Command.PING.getValue().toLowerCase())).getBytes();
-            outputStream.write(bytes);
-            outputStream.flush();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                if (line.isEmpty()) continue;
-                System.out.println("GET CONNECTION : process line: " + line);
-                if (line.equalsIgnoreCase("+" + Command.PONG.getValue())) {
-                    sendReplConfCommandToMaster(bufferedReader, outputStream);
+        OutputStream outputStream = socket.getOutputStream();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        byte[] bytes = commandParser.getResponseFromCommandArray(List.of(Command.PING.getValue().toLowerCase())).getBytes();
+        outputStream.write(bytes);
+        outputStream.flush();
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            if (line.isEmpty()) continue;
+            System.out.println("GET CONNECTION : process line: " + line);
+            if (line.equalsIgnoreCase("+" + Command.PONG.getValue())) {
+                sendReplConfCommandToMaster(bufferedReader, outputStream);
+
+            }else {
+                if (line.startsWith("$")){
+                    System.out.printf("LINE %S", line);
+                    String substringed = line.substring(1);
+                    int charsToSkip = Integer.parseInt(substringed) - 1;
+                    long skip = bufferedReader.skip(charsToSkip);
+                    break;
                 }
             }
         }
@@ -52,7 +60,6 @@ public class ConnectionHandler {
     }
 
     private String sendReplConfCapa(BufferedReader bufferedReader, OutputStream outputStream) throws IOException {
-
         outputStream.write(commandParser.getResponseFromCommandArray(List.of(
                         Command.REPLCONF.getValue(),
                         "capa",

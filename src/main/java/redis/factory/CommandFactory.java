@@ -4,7 +4,7 @@ import redis.command.*;
 import redis.command.model.Command;
 import redis.service.ReplicaSender;
 
-public class CommandFactory {
+public class CommandFactory implements Factory {
     private final Command command;
     private final ReplicaSender replicaSender;
 
@@ -13,22 +13,29 @@ public class CommandFactory {
         this.replicaSender = replicaSender;
     }
 
+    public CommandFactory(Command command) {
+        this.command = command;
+        this.replicaSender = null;
+    }
+
     public CommandProcessor getInstance() {
         System.out.printf("factory get instance of command %s%n", command);
         if (command.equals(Command.PING)) {
-            return new PingCommandProcessor();
+            return replicaSender == null ? new ReplicaPingCommandProcessor() : new PingCommandProcessor();
         } else if (command.equals(Command.ECHO)) {
-            return new EchoCommandProcessor();
+            return replicaSender == null ? new ReplicaEchoCommandProcessor() : new EchoCommandProcessor();
         } else if (command.equals(Command.SET)) {
-            return new SetCommandProcessor();
+            return replicaSender == null ? new ReplicaSetCommandProcessor() : new SetCommandProcessor();
         } else if (command.equals(Command.GET)) {
-            return new GetCommandProcessor();
+            return replicaSender == null ? new ReplicaGetCommandProcessor() : new GetCommandProcessor();
         } else if (command.equals(Command.INFO)) {
-            return new InfoCommandProcessor();
+            return replicaSender == null ? new ReplicaInfoCommandProcessor() : new InfoCommandProcessor();
         } else if (command.equals(Command.REPLCONF)) {
-            return new ReplConfCommandProcessor();
+            return replicaSender == null ? new ReplicaReplConfCommandProcessor() : new ReplConfCommandProcessor();
         } else if (command.equals(Command.PSYNC)) {
-            return new FullResyncCommandProcessor(replicaSender);
+            return replicaSender == null ? new ReplicaFullResyncCommandProcessor() : new FullResyncCommandProcessor(replicaSender);
+        } else if (command.equals(Command.FULLRESYNC)) {
+            return new ReplicaFullResyncCommandProcessor();
         }
         return null;
     }
