@@ -1,4 +1,4 @@
-package redis.command.replica;
+package redis.command.master;
 
 import redis.command.model.Command;
 import redis.parser.CommandParser;

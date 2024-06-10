@@ -1,5 +1,7 @@
 package redis;
 
+import redis.client.master.MasterRedisClient;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -18,8 +20,8 @@ public class RedisSocket extends Thread {
             serverSocket.setReuseAddress(true);
             while (!serverSocket.isClosed()) {
                 Socket clientSocket = serverSocket.accept();
-                RedisClient task;
-                task = new RedisClient(clientSocket);
+                MasterRedisClient task;
+                task = new MasterRedisClient(clientSocket);
                 Thread thread = new Thread(task);
                 thread.start();
             }

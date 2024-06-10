@@ -21,6 +21,8 @@ public class CommandUtil {
             return Command.FULLRESYNC;
         } else if (remove.toLowerCase().contains(Command.PSYNC.getValue()) || remove.equalsIgnoreCase(Command.PSYNC.getValue())) {
             return Command.PSYNC;
+        } else if (remove.toLowerCase().contains(Command.WAIT.getValue()) || remove.equalsIgnoreCase(Command.WAIT.getValue())) {
+            return Command.WAIT;
         } else return null;
     }
 }

@@ -1,4 +1,4 @@
-package redis.command.replica;
+package redis.command.master;
 
 import java.io.IOException;
 import java.io.OutputStream;

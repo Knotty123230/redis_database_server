@@ -1,4 +1,6 @@
-package redis.command;
+package redis.command.master;
+
+import redis.command.CommandProcessor;
 
 import java.io.IOException;
 import java.io.OutputStream;

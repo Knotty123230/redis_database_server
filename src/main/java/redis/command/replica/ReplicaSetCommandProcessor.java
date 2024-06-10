@@ -1,5 +1,6 @@
-package redis.command;
+package redis.command.replica;
 
+import redis.command.CommandProcessor;
 import redis.command.model.Command;
 import redis.storage.RedisStorage;
 
@@ -13,7 +14,7 @@ public class ReplicaSetCommandProcessor implements CommandProcessor {
 
     @Override
     public void processCommand(List<String> commands, OutputStream os) {
-        System.out.printf("Processing SET command %s%n", commands);
+        System.out.printf("Processing SET replica command %s%n", commands);
         Map<String, String> commandsMap = new HashMap<>();
 
         for (int i = 2; i < commands.size(); i += 2) {

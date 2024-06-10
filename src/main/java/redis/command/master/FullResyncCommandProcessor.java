@@ -1,8 +1,7 @@
-package redis.command;
+package redis.command.master;
 
+import redis.command.CommandProcessor;
 import redis.command.model.Command;
-import redis.command.replica.CommandSender;
-import redis.command.replica.ReplconfCommandSender;
 import redis.service.ApplicationInfo;
 import redis.service.ReplicaSender;
 
@@ -19,12 +18,10 @@ import java.util.stream.Stream;
 public class FullResyncCommandProcessor implements CommandProcessor {
     private final ApplicationInfo applicationInfo;
     private final ReplicaSender replicaSender;
-    private final CommandSender commandSender;
 
     public FullResyncCommandProcessor(ReplicaSender replicaSender) {
         this.applicationInfo = ApplicationInfo.getInstance();
         this.replicaSender = replicaSender;
-        this.commandSender = new ReplconfCommandSender();
     }
 
     @Override
@@ -44,6 +41,7 @@ public class FullResyncCommandProcessor implements CommandProcessor {
                 os.write(("$" + decode.length + "\r\n").getBytes());
                 os.write(decode);
                 os.flush();
+
 //                commandSender.send(os);
             } catch (IOException e) {
                 throw new RuntimeException(e);

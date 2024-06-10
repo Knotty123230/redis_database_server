@@ -11,7 +11,7 @@ public enum Command {
     PX("PX"),
     REPLCONF("REPLCONF"),
     REPLICATION("REPLICATION"),
-    SET("SET");
+    SET("SET"), WAIT("WAIT");
     private final String value;
 
     Command(String value) {

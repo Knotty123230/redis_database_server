@@ -1,6 +1,8 @@
 package redis.replicas;
 
-import redis.RedisClient;
+import redis.client.Client;
+import redis.client.master.MasterRedisClient;
+import redis.client.replica.ReplicaRedisClient;
 import redis.parser.CommandParser;
 import redis.replicas.handler.ConnectionHandler;
 
@@ -23,7 +25,7 @@ public class ReplicaConnectionService {
 
         ConnectionHandler connectionHandler = new ConnectionHandler(socket, commandParser, port);
         BufferedReader bufferedReader = connectionHandler.handleConnection();
-        RedisClient redisClient = new RedisClient(socket, bufferedReader);
+        Client redisClient = new ReplicaRedisClient(bufferedReader,socket);
         Thread thread = new Thread(redisClient);
         thread.start();
         System.out.println("ReplicaConnectionService: CONNECTION SUCCESS");

@@ -1,5 +1,6 @@
-package redis.command;
+package redis.command.master;
 
+import redis.command.CommandProcessor;
 import redis.command.model.Command;
 import redis.service.ApplicationInfo;
 import redis.utils.ResponseUtil;

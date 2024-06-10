@@ -1,19 +1,18 @@
-package redis.command;
+package redis.command.master;
 
-import redis.command.model.Command;
+import redis.command.CommandProcessor;
+import redis.utils.ResponseUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-public class PingCommandProcessor implements CommandProcessor {
-
-
+public class EchoCommandProcessor implements CommandProcessor {
     @Override
     public void processCommand(List<String> command, OutputStream os) {
-        System.out.printf("Processing PING command %s%n", command);
+        System.out.printf("Processing ECHO command %s%n", command);
         try {
-            os.write(("+" + Command.PONG.getValue() + "\r\n").getBytes());
+            os.write(ResponseUtil.getResponse(command.get(0)));
             os.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);

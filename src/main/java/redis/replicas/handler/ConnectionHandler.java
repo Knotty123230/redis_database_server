@@ -1,6 +1,5 @@
 package redis.replicas.handler;
 
-import redis.command.CommandHandler;
 import redis.command.model.Command;
 import redis.parser.CommandParser;
 

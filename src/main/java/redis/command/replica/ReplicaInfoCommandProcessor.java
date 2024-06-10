@@ -1,9 +1,11 @@
-package redis.command;
+package redis.command.replica;
+
+import redis.command.CommandProcessor;
 
 import java.io.OutputStream;
 import java.util.List;
 
-public class ReplicaPingCommandProcessor implements CommandProcessor {
+public class ReplicaInfoCommandProcessor implements CommandProcessor {
     @Override
     public void processCommand(List<String> command, OutputStream os) {
 

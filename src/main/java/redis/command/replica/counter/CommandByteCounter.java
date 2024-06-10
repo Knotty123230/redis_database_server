@@ -1,12 +1,12 @@
-package redis.command.replica;
+package redis.command.replica.counter;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommandByteCounter {
+    private static volatile CommandByteCounter instance;
     private final AtomicInteger bytes;
     private final AtomicBoolean isFirst;
-    private static volatile CommandByteCounter instance;
 
     private CommandByteCounter() {
         bytes = new AtomicInteger(0);
@@ -31,7 +31,6 @@ public class CommandByteCounter {
     public boolean isFirst() {
         return isFirst.get();
     }
-
 
 
     public void addBytes(int bytesLength) {
