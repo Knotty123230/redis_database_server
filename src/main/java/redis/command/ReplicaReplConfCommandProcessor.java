@@ -1,6 +1,7 @@
 package redis.command;
 
 import redis.command.model.Command;
+import redis.command.replica.CommandByteCounter;
 import redis.parser.CommandParser;
 
 import java.io.IOException;
@@ -9,19 +10,23 @@ import java.util.List;
 
 public class ReplicaReplConfCommandProcessor implements CommandProcessor {
     private final CommandParser commandParser;
+    private final CommandByteCounter commandByteCounter;
 
     public ReplicaReplConfCommandProcessor() {
         commandParser = new CommandParser();
+        this.commandByteCounter = CommandByteCounter.getInstance();
     }
 
     @Override
     public void processCommand(List<String> command, OutputStream os) {
         System.out.println("ReplicaReplConfCommandProcessor processed command: " + command);
         try {
-            os.write(commandParser.getResponseFromCommandArray(List.of(Command.REPLCONF.getValue(), "ACK", "0")).getBytes());
+            byte[] bytes = commandParser.getResponseFromCommandArray(List.of(Command.REPLCONF.getValue(), "ACK", commandByteCounter.getBytes().toString())).getBytes();
+            os.write(bytes);
             os.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 }

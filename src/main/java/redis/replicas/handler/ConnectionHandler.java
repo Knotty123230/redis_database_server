@@ -15,13 +15,11 @@ public class ConnectionHandler {
     private final Socket socket;
     private final CommandParser commandParser;
     private final int port;
-    private CommandHandler commandHandler;
 
     public ConnectionHandler(Socket socket, CommandParser commandParser, int port) {
         this.socket = socket;
         this.commandParser = commandParser;
         this.port = port;
-        this.commandHandler = new CommandHandler(null);
     }
 
     public BufferedReader handleConnection() {

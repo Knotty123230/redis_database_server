@@ -1,7 +1,9 @@
 package redis.command;
 
 import redis.command.model.Command;
+import redis.command.replica.CommandByteCounter;
 import redis.factory.CommandFactory;
+import redis.parser.CommandParser;
 import redis.service.ReplicaSender;
 import redis.utils.CommandUtil;
 
@@ -27,6 +29,7 @@ public class CommandHandler {
         if (replicaSender == null) {
             commandFactory = new CommandFactory(command);
         } else {
+
             commandFactory = new CommandFactory(command, replicaSender);
         }
         CommandProcessor commandProcessor = commandFactory.getInstance();
