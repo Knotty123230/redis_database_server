@@ -5,6 +5,7 @@ import redis.factory.CommandFactory;
 import redis.service.ReplicaSender;
 import redis.utils.CommandUtil;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +30,11 @@ public class CommandHandler {
             commandFactory = new CommandFactory(command, replicaSender);
         }
         CommandProcessor commandProcessor = commandFactory.getInstance();
-        commandProcessor.processCommand(commands, os);
+        try {
+            commandProcessor.processCommand(commands, os);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return false;
     }
 }

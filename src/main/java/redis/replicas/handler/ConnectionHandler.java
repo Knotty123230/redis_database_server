@@ -1,5 +1,6 @@
 package redis.replicas.handler;
 
+import redis.command.CommandHandler;
 import redis.command.model.Command;
 import redis.parser.CommandParser;
 
@@ -14,36 +15,41 @@ public class ConnectionHandler {
     private final Socket socket;
     private final CommandParser commandParser;
     private final int port;
+    private CommandHandler commandHandler;
 
     public ConnectionHandler(Socket socket, CommandParser commandParser, int port) {
         this.socket = socket;
         this.commandParser = commandParser;
         this.port = port;
+        this.commandHandler = new CommandHandler(null);
     }
 
-    public void handleConnection() throws IOException {
-        OutputStream outputStream = socket.getOutputStream();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        byte[] bytes = commandParser.getResponseFromCommandArray(List.of(Command.PING.getValue().toLowerCase())).getBytes();
-        outputStream.write(bytes);
-        outputStream.flush();
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            if (line.isEmpty()) continue;
-            System.out.println("GET CONNECTION : process line: " + line);
-            if (line.equalsIgnoreCase("+" + Command.PONG.getValue())) {
-                sendReplConfCommandToMaster(bufferedReader, outputStream);
-
-            }else {
-                if (line.startsWith("$")){
-                    System.out.printf("LINE %S", line);
-                    String substringed = line.substring(1);
+    public BufferedReader handleConnection() {
+        try {
+            OutputStream outputStream = socket.getOutputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            byte[] bytes = commandParser.getResponseFromCommandArray(List.of(Command.PING.getValue().toLowerCase())).getBytes();
+            outputStream.write(bytes);
+            outputStream.flush();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (line.isEmpty()) continue;
+                System.out.println("GET CONNECTION : process line: " + line);
+                if (line.equalsIgnoreCase("+" + Command.PONG.getValue())) {
+                    sendReplConfCommandToMaster(bufferedReader, outputStream);
+                } else if (line.startsWith("+FULLRESYNC")) {
+                    String s = bufferedReader.readLine();
+                    String substringed = s.substring(1);
                     int charsToSkip = Integer.parseInt(substringed) - 1;
                     long skip = bufferedReader.skip(charsToSkip);
-                    break;
+                    System.out.println("skipped bytes : " + skip);
+                    return bufferedReader;
                 }
             }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
+        return null;
     }
 
     private void sendReplConfCommandToMaster(BufferedReader bufferedReader, OutputStream outputStream) throws IOException {
