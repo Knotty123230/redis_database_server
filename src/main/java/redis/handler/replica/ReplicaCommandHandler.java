@@ -1,4 +1,4 @@
-package redis.command.replica;
+package redis.handler.replica;
 
 import redis.command.CommandHandler;
 import redis.command.CommandProcessor;

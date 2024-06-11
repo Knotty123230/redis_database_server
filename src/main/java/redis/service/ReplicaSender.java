@@ -6,13 +6,17 @@ import redis.model.ConnectedReplica;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ReplicaSender implements Closeable {
     private final Queue<ConnectedReplica> connectedReplicas;
+    private final List<ConnectedReplica> connectedReplicasUnmodifiedList;
     private final Queue<String> commands;
     private final ExecutorService executorService;
 
@@ -20,10 +24,15 @@ public class ReplicaSender implements Closeable {
         this.connectedReplicas = new LinkedBlockingQueue<>();
         this.commands = new LinkedBlockingQueue<>();
         this.executorService = Executors.newCachedThreadPool();
+        connectedReplicasUnmodifiedList = new CopyOnWriteArrayList<>();
     }
 
     public static ReplicaSender getInstance() {
         return SingletonHelper.INSTANCE;
+    }
+
+    public String getCountConnectedReplicas() {
+        return String.valueOf(connectedReplicasUnmodifiedList.size());
     }
 
     private static class SingletonHelper {
@@ -59,6 +68,7 @@ public class ReplicaSender implements Closeable {
     }
 
     public void addConnection(OutputStream outputStream) {
+        connectedReplicasUnmodifiedList.add(new ConnectedReplica(outputStream));
         connectedReplicas.add(new ConnectedReplica(outputStream));
     }
 

@@ -1,7 +1,7 @@
 package redis.client.replica;
 
 import redis.client.Client;
-import redis.command.replica.ReplicaCommandHandler;
+import redis.handler.replica.ReplicaCommandHandler;
 import redis.command.replica.counter.CommandByteCounter;
 
 import java.io.BufferedReader;

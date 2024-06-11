@@ -1,4 +1,4 @@
-package redis.command.master;
+package redis.handler.master;
 
 import redis.command.CommandHandler;
 import redis.command.CommandProcessor;
