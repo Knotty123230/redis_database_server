@@ -54,6 +54,9 @@ public class RdbFileInfo {
         if (parameters.containsKey("--dbfilename")) {
              fileName = parameters.get("--dbfilename");
         }
+        if (path.isEmpty() || fileName.isEmpty() ){
+            return;
+        }
         this.rdbFile = new RdbFile(path, fileName);
         System.out.println(fileName);
         this.file = new File( rdbFile.path() + "/" + rdbFile.fileName());
