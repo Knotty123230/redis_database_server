@@ -47,6 +47,7 @@ public class RdbFileInfo {
     public void setFile(Map<String, String> parameters) {
         String path = "";
         String fileName = "";
+        System.out.println(parameters);
         if (parameters.containsKey("--dir")){
              path = parameters.get("--dir");
         } else if (parameters.containsKey("--dbfilename")) {
