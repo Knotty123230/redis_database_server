@@ -17,6 +17,7 @@ public class RdbFileInfo {
     private static RdbFileInfo instance;
     private File file;
     private RdbFileInfo() {
+
     }
 
     public static synchronized RdbFileInfo getInstance() {
@@ -27,14 +28,13 @@ public class RdbFileInfo {
     }
 
     public byte[] getContent() {
-        byte[] decode;
-        try (Stream<String> stringStream = Files.lines(Path.of(file.getPath()))) {
+        System.out.println(this.file.getPath());
+        try (Stream<String> stringStream = Files.lines(Path.of(this.file.getPath()))) {
             String readFile = stringStream.collect(Collectors.joining());
-            decode = Base64.getDecoder().decode(readFile);
+            return Base64.getDecoder().decode(readFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return decode;
     }
     public String getFileName(){
         return rdbFile.fileName();
