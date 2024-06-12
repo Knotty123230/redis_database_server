@@ -1,8 +1,9 @@
 package redis.client.replica;
 
 import redis.client.Client;
-import redis.handler.replica.ReplicaCommandHandler;
+import redis.command.CommandHandler;
 import redis.command.replica.counter.CommandByteCounter;
+import redis.handler.replica.ReplicaCommandHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,13 +15,10 @@ public class ReplicaRedisClient extends Client {
     private final CommandByteCounter commandByteCounter;
 
     public ReplicaRedisClient(BufferedReader reader, Socket socket) {
-        super(reader, new ReplicaCommandHandler(), socket);
+        super(reader, socket);
         this.commandByteCounter = CommandByteCounter.getInstance();
     }
 
-    public ReplicaRedisClient(Socket socket) {
-        this(null, socket);
-    }
 
     @Override
     protected void handleClient(BufferedReader bufferedReader, OutputStream outputStream) throws IOException {
@@ -30,7 +28,9 @@ public class ReplicaRedisClient extends Client {
             List<String> parsedCommands = commandParser.parseCommand(bufferedReader, line);
             System.out.println("ReplicaRedisClient parse: " + parsedCommands);
             addBytes(parsedCommands);
-            commandHandler.processCommand(parsedCommands, outputStream);
+            CommandHandler commandHandler = new ReplicaCommandHandler(parsedCommands, outputStream);
+            Thread thread = new Thread(commandHandler);
+            thread.start();
         }
     }
 

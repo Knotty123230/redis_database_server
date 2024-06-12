@@ -14,10 +14,10 @@ import java.net.Socket;
 
 public class ConnectionHandler {
     private final Socket socket;
-    private CommandSender commandSender;
     private final RdbReader reader;
     private final int port;
     private final CommandParser commandParser;
+    private CommandSender commandSender;
 
     public ConnectionHandler(Socket socket, CommandParser commandParser, int port) {
         this.socket = socket;

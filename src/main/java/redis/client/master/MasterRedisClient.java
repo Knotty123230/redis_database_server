@@ -1,7 +1,9 @@
 package redis.client.master;
 
 import redis.client.Client;
+import redis.command.CommandHandler;
 import redis.handler.master.MasterCommandHandler;
+import redis.service.ReplicaReceiver;
 import redis.service.ReplicaSender;
 
 import java.io.BufferedReader;
@@ -12,8 +14,11 @@ import java.util.List;
 
 public class MasterRedisClient extends Client {
 
-    public MasterRedisClient(Socket socket) {
-        super(socket, new MasterCommandHandler(ReplicaSender.getInstance()));
+    private final ReplicaReceiver replicaReceiver;
+
+    public MasterRedisClient(Socket socket, ReplicaReceiver replicaReceiver) {
+        super(socket);
+        this.replicaReceiver = replicaReceiver;
     }
 
     @Override
@@ -22,7 +27,9 @@ public class MasterRedisClient extends Client {
         while ((line = bufferedReader.readLine()) != null) {
             if (line.isEmpty()) continue;
             List<String> parsedCommands = commandParser.parseCommand(bufferedReader, line);
-            commandHandler.processCommand(parsedCommands, outputStream);
+            CommandHandler commandHandler = new MasterCommandHandler(replicaReceiver, ReplicaSender.getInstance(), parsedCommands, outputStream);
+            Thread thread = new Thread(commandHandler);
+            thread.start();
         }
     }
 }

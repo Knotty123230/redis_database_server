@@ -10,6 +10,7 @@ public class Settings {
         }
         return port;
     }
+
     public static Map<String, String> extractArgs(String[] args) {
         Map<String, String> parameters = new HashMap<>();
         for (int i = 0; i < args.length; i++) {

@@ -14,7 +14,7 @@ public class RdbReader {
             long skip = bf.skip(charsToSkip);
             System.out.println("skipped bytes : " + skip);
             return bf;
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
         return null;

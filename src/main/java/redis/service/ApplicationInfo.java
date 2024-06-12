@@ -17,6 +17,11 @@ public class ApplicationInfo {
         }
         return applicationInfo;
     }
+
+    public String getRole() {
+        return applicationInfo.info.get("role");
+    }
+
     public String[] findRole(Map<String, String> parameters) {
         String[] masterPortAndHost = new String[]{};
         String role = "master";

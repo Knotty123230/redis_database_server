@@ -1,30 +1,25 @@
 package redis.client;
 
-import redis.command.CommandHandler;
 import redis.parser.CommandParser;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.IOException;
 import java.net.Socket;
-import java.util.List;
 
 public abstract class Client implements Runnable {
-    protected BufferedReader reader;
-    protected final CommandHandler commandHandler;
     protected final CommandParser commandParser;
     protected final Socket socket;
+    protected BufferedReader reader;
 
-    protected Client(Socket socket, CommandHandler commandHandler) {
+    protected Client(Socket socket) {
         this.socket = socket;
-        this.commandHandler = commandHandler;
         this.commandParser = new CommandParser();
     }
 
-    protected Client(BufferedReader reader, CommandHandler commandHandler, Socket socket) {
+    protected Client(BufferedReader reader, Socket socket) {
         this.reader = reader;
-        this.commandHandler = commandHandler;
         this.commandParser = new CommandParser();
         this.socket = socket;
     }

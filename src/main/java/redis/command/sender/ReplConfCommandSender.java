@@ -10,6 +10,7 @@ import java.util.List;
 
 public class ReplConfCommandSender extends CommandSender {
     private final String port;
+
     public ReplConfCommandSender(String port, CommandParser commandParser) {
         super(commandParser);
         this.port = port;
@@ -27,6 +28,7 @@ public class ReplConfCommandSender extends CommandSender {
             outputStream.write(commandParser.getResponseFromCommandArray(List.of(Command.PSYNC.getValue(), "?", "-1")).getBytes());
         }
     }
+
     private String sendReplConfCapa(BufferedReader bufferedReader, OutputStream outputStream) throws IOException {
         outputStream.write(commandParser.getResponseFromCommandArray(List.of(
                         Command.REPLCONF.getValue(),

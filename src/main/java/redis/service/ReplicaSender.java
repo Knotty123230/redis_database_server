@@ -6,25 +6,23 @@ import redis.model.ConnectedReplica;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReplicaSender implements Closeable {
     private final Queue<ConnectedReplica> connectedReplicas;
-    private final List<ConnectedReplica> connectedReplicasUnmodifiedList;
     private final Queue<String> commands;
     private final ExecutorService executorService;
+    private final AtomicInteger countCommands;
 
     private ReplicaSender() {
         this.connectedReplicas = new LinkedBlockingQueue<>();
         this.commands = new LinkedBlockingQueue<>();
         this.executorService = Executors.newCachedThreadPool();
-        connectedReplicasUnmodifiedList = new CopyOnWriteArrayList<>();
+        countCommands = new AtomicInteger(0);
     }
 
     public static ReplicaSender getInstance() {
@@ -32,11 +30,11 @@ public class ReplicaSender implements Closeable {
     }
 
     public String getCountConnectedReplicas() {
-        return String.valueOf(connectedReplicasUnmodifiedList.size());
+        return String.valueOf(connectedReplicas.size());
     }
 
-    private static class SingletonHelper {
-        private static final ReplicaSender INSTANCE = new ReplicaSender();
+    public boolean isEmptyCommands() {
+        return commands.isEmpty();
     }
 
     public void start() {
@@ -61,19 +59,28 @@ public class ReplicaSender implements Closeable {
     }
 
     public void addCommand(String command) {
-        System.out.println("MASTER added command to replica: " + command);
-        if (command.toLowerCase().contains(Command.SET.getValue().toLowerCase())) {
+        if (command.toLowerCase().contains(Command.SET.getValue().toLowerCase()) || command.toLowerCase().contains("GETACK".toLowerCase())) {
+            countCommands.getAndIncrement();
+            System.out.println("MASTER added command to replica: " + command);
             commands.add(command);
         }
     }
 
+    public int getCountCommands() {
+        return countCommands.getAndSet(0);
+    }
+
     public void addConnection(OutputStream outputStream) {
-        connectedReplicasUnmodifiedList.add(new ConnectedReplica(outputStream));
         connectedReplicas.add(new ConnectedReplica(outputStream));
+        System.out.println("SIZE CONNECTED REPLICAS = " + connectedReplicas.size());
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         executorService.shutdown();
+    }
+
+    private static final class SingletonHelper {
+        private static final ReplicaSender INSTANCE = new ReplicaSender();
     }
 }

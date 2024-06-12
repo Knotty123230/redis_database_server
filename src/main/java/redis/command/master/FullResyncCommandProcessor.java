@@ -19,6 +19,7 @@ public class FullResyncCommandProcessor implements CommandProcessor {
     private final ApplicationInfo applicationInfo;
     private final ReplicaSender replicaSender;
 
+
     public FullResyncCommandProcessor(ReplicaSender replicaSender) {
         this.applicationInfo = ApplicationInfo.getInstance();
         this.replicaSender = replicaSender;
@@ -42,7 +43,7 @@ public class FullResyncCommandProcessor implements CommandProcessor {
                 os.write(decode);
                 os.flush();
 
-//                commandSender.send(os);
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

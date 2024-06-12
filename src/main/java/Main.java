@@ -1,6 +1,7 @@
 import redis.RedisSocket;
 import redis.handler.replica.ReplicaConnectionService;
 import redis.service.ApplicationInfo;
+import redis.service.ReplicaReceiver;
 import redis.utils.Settings;
 
 import java.io.IOException;
@@ -22,15 +23,16 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         ServerSocket serverSocket;
         try {
             serverSocket = new ServerSocket(port);
-            Thread thread = new Thread(new RedisSocket(serverSocket));
+            Thread thread = new Thread(new RedisSocket(serverSocket, new ReplicaReceiver()));
             thread.start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+
     }
 
 

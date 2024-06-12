@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class ReplicaConnectionService {
-    private Socket socket;
     private final CommandParser commandParser;
     private final int port;
+    private Socket socket;
 
     public ReplicaConnectionService(String[] masterPortAndHost, int port) throws IOException {
         this.port = port;
