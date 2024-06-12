@@ -3,6 +3,7 @@ package redis.command.master;
 import redis.command.CommandProcessor;
 import redis.command.model.Command;
 import redis.service.ApplicationInfo;
+import redis.service.RdbFileInfo;
 import redis.service.ReplicaSender;
 
 import java.io.File;
@@ -18,25 +19,20 @@ import java.util.stream.Stream;
 public class FullResyncCommandProcessor implements CommandProcessor {
     private final ApplicationInfo applicationInfo;
     private final ReplicaSender replicaSender;
+    private final RdbFileInfo rdbFileInfo;
 
 
     public FullResyncCommandProcessor(ReplicaSender replicaSender) {
         this.applicationInfo = ApplicationInfo.getInstance();
         this.replicaSender = replicaSender;
+        rdbFileInfo = RdbFileInfo.getInstance();
     }
 
     @Override
     public void processCommand(List<String> command, OutputStream os) {
         synchronized (this) {
-            replicaSender.addConnection(os);
-            byte[] decode;
-            File file = new File("/tmp/rdb.rdb");
-            try (Stream<String> stringStream = Files.lines(Path.of(file.getPath()))) {
-                String rdbFile = stringStream.collect(Collectors.joining());
-                decode = Base64.getDecoder().decode(rdbFile);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+           replicaSender.addConnection(os);
+            byte[] decode = rdbFileInfo.getContent();
             try {
                 os.write(("+" + Command.FULLRESYNC.getValue() + " " + applicationInfo.getInfo().get("master_replid") + " 0\r\n").getBytes());
                 os.write(("$" + decode.length + "\r\n").getBytes());
