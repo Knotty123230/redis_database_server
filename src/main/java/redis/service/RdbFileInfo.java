@@ -50,7 +50,8 @@ public class RdbFileInfo {
         System.out.println(parameters);
         if (parameters.containsKey("--dir")){
              path = parameters.get("--dir");
-        } else if (parameters.containsKey("--dbfilename")) {
+        }
+        if (parameters.containsKey("--dbfilename")) {
              fileName = parameters.get("--dbfilename");
         }
         this.rdbFile = new RdbFile(path, fileName);
