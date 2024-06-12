@@ -61,13 +61,14 @@ public class RdbFileInfo {
         }
         this.rdbFile = new RdbFile(path, fileName);
         System.out.println(fileName);
-        this.file = new File(rdbFile.path() + "/" + rdbFile.fileName());
-        if (!file.exists()) {
-            boolean mkdir = file.getParentFile().mkdir();
+        File file1 = new File(rdbFile.path() + "/" + rdbFile.fileName());
+        if (!file1.exists()) {
+            boolean mkdir = file1.getParentFile().mkdir();
             System.out.println(mkdir);
-            try (FileWriter writer = new FileWriter(file)) {
+            try (FileWriter writer = new FileWriter(file1)) {
                 writer.write("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==");
                 writer.flush();
+                this.file = file1;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
