@@ -16,6 +16,7 @@ public class Settings {
         for (int i = 0; i < args.length; i++) {
             if (i + 1 >= args.length) break;
             parameters.put(args[i], args[i + 1]);
+            System.out.println(parameters);
         }
         return parameters;
     }
