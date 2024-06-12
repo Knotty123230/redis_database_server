@@ -19,7 +19,6 @@ public class RdbFileInfo {
     private RdbFileInfo() {
     }
 
-    // Static method to get the singleton instance
     public static synchronized RdbFileInfo getInstance() {
         if (instance == null) {
             instance = new RdbFileInfo();
@@ -30,8 +29,8 @@ public class RdbFileInfo {
     public byte[] getContent() {
         byte[] decode;
         try (Stream<String> stringStream = Files.lines(Path.of(file.getPath()))) {
-            String rdbFile = stringStream.collect(Collectors.joining());
-            decode = Base64.getDecoder().decode(rdbFile);
+            String readFile = stringStream.collect(Collectors.joining());
+            decode = Base64.getDecoder().decode(readFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
