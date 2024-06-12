@@ -53,8 +53,8 @@ public class RdbFileInfo {
              fileName = parameters.get("--dbfilename");
         }
         this.rdbFile = new RdbFile(path, fileName);
-        this.file = new File("/" + rdbFile.path() + "/" + rdbFile.fileName());
-        if (!file.exists()){
+        this.file = new File( rdbFile.path() + "/" + rdbFile.fileName());
+        if (file.exists()){
             file.mkdir();
             try (FileWriter writer = new FileWriter(file)){
                 writer.write("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==");
