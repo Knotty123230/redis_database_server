@@ -60,7 +60,7 @@ public class RdbFileInfo {
         System.out.println(fileName);
         this.file = new File( rdbFile.path() + "/" + rdbFile.fileName());
         if (file.exists()){
-            file.mkdir();
+            file.mkdirs();
             System.out.println(file.getPath());
             try (FileWriter writer = new FileWriter(file)){
                 writer.write("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==");
