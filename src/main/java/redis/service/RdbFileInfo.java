@@ -61,23 +61,17 @@ public class RdbFileInfo {
         }
         this.rdbFile = new RdbFile(path, fileName);
         System.out.println(fileName);
-        this.file = new File((rdbFile.path()).substring(1));
+        this.file = new File(rdbFile.path() + "/" + rdbFile.fileName());
         if (!file.exists()) {
-            boolean mkdirs = file.mkdirs();
+            boolean mkdirs = file.getParentFile().mkdirs();
             System.out.println(mkdirs);
-            File file1 = new File(file.getPath() + "/" + rdbFile.fileName());
-            if (!file1.exists()) {
-                boolean mkdir = file1.mkdir();
-                System.out.println("mkdir = " + mkdir);
-                try (FileWriter writer = new FileWriter(file1)) {
-                    writer.write("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==");
-                    writer.flush();
-                    this.file = file1;
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
+            try (FileWriter writer = new FileWriter(file)) {
+                writer.write("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==");
+                writer.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }
+
 }
