@@ -20,14 +20,12 @@ public class ConfigCommandProcessor implements CommandProcessor {
 
     @Override
     public void processCommand(List<String> command, OutputStream os) throws IOException {
-        if (command.getFirst().equalsIgnoreCase(ConfigCommand.DIR.name())){
+        if (command.getFirst().equalsIgnoreCase(ConfigCommand.DIR.getValue())){
             String path = rdbFileInfo.getPath();
             os.write(commandParser.getResponseFromCommandArray(List.of("dir", path)).getBytes());
-            return;
-        } else if (command.getFirst().equalsIgnoreCase(ConfigCommand.DBFILENAME.name())) {
+        } else if (command.getFirst().equalsIgnoreCase(ConfigCommand.DBFILENAME.getValue())) {
             String fileName = rdbFileInfo.getFileName();
             os.write(commandParser.getResponseFromCommandArray(List.of(ConfigCommand.DBFILENAME.name(), fileName)).getBytes());
-            return;
         }
     }
 }
