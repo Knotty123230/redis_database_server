@@ -9,8 +9,8 @@ public class RdbReader {
 
 
             String s = bf.readLine();
-            String substringed = s.substring(1);
-            int charsToSkip = Integer.parseInt(substringed) - 1;
+            String substring = s.substring(1);
+            int charsToSkip = Integer.parseInt(substring) - 1;
             long skip = bf.skip(charsToSkip);
             System.out.println("skipped bytes : " + skip);
             return bf;

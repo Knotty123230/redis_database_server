@@ -1,6 +1,7 @@
 import redis.RedisSocket;
 import redis.handler.replica.ReplicaConnectionService;
 import redis.service.ApplicationInfo;
+import redis.service.RdbFileInfo;
 import redis.service.ReplicaReceiver;
 import redis.utils.Settings;
 
@@ -10,11 +11,12 @@ import java.util.Map;
 
 public class Main {
     private static final ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
-
+    private static final RdbFileInfo rdbfileInfo = RdbFileInfo.getInstance();
     public static void main(String[] args) {
         Map<String, String> parameters = Settings.extractArgs(args);
         int port = 6379;
         String[] masterPortAndHost = applicationInfo.findRole(parameters);
+        rdbfileInfo.setFile(parameters);
         port = Settings.extractPort(parameters, port);
         ReplicaConnectionService replicaConnectionService;
         try {

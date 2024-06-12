@@ -23,6 +23,8 @@ public class CommandUtil {
             return Command.PSYNC;
         } else if (remove.toLowerCase().contains(Command.WAIT.getValue()) || remove.equalsIgnoreCase(Command.WAIT.getValue())) {
             return Command.WAIT;
+        } else if (remove.toLowerCase().contains(Command.CONFIG.getValue()) || remove.equalsIgnoreCase(Command.REPLCONF.getValue())) {
+            return Command.CONFIG;
         } else return null;
     }
 }

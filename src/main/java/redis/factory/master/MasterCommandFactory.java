@@ -38,6 +38,8 @@ public class MasterCommandFactory implements Factory {
             return new FullResyncCommandProcessor(replicaSender);
         } else if (command.equals(Command.WAIT)) {
             return new WaitCommandProcessor(replicaSender, replicaReceiver);
+        } else if (command.equals(Command.CONFIG)) {
+            return  new ConfigCommandProcessor();
         }
         return null;
     }
