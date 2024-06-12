@@ -21,11 +21,11 @@ public class ConfigCommandProcessor implements CommandProcessor {
     @Override
     public void processCommand(List<String> command, OutputStream os) throws IOException {
         System.out.println("PROCESS COMMAND CONFIG: " + command);
-        if (command.getFirst().equalsIgnoreCase(ConfigCommand.DIR.getValue())){
+        if (command.get(1).equalsIgnoreCase(ConfigCommand.DIR.getValue())){
             String path = rdbFileInfo.getPath();
             os.write(commandParser.getResponseFromCommandArray(List.of("dir", path)).getBytes());
             os.flush();
-        } else if (command.getFirst().equalsIgnoreCase(ConfigCommand.DBFILENAME.getValue())) {
+        } else if (command.get(1).equalsIgnoreCase(ConfigCommand.DBFILENAME.getValue())) {
             String fileName = rdbFileInfo.getFileName();
             os.write(commandParser.getResponseFromCommandArray(List.of(ConfigCommand.DBFILENAME.name(), fileName)).getBytes());
             os.flush();
