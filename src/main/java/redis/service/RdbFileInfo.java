@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 public class RdbFileInfo {
     private RdbFile rdbFile;
     private static RdbFileInfo instance;
-    private File file;
 
     private RdbFileInfo() {
 
@@ -29,8 +28,7 @@ public class RdbFileInfo {
     }
 
     public byte[] getContent() {
-        System.out.println(this.file.getPath());
-        try (Stream<String> stringStream = Files.lines(Path.of(this.file.getPath()))) {
+        try (Stream<String> stringStream = Files.lines(Path.of(rdbFile.path() + "/" + rdbFile.fileName()))) {
             String readFile = stringStream.collect(Collectors.joining());
             return Base64.getDecoder().decode(readFile);
         } catch (IOException e) {
@@ -61,7 +59,7 @@ public class RdbFileInfo {
         }
         this.rdbFile = new RdbFile(path, fileName);
         System.out.println(fileName);
-        String pathname = rdbFile.path() + "/" + rdbFile.fileName().substring(1);
+        String pathname = rdbFile.path() + "/" + rdbFile.fileName();
         File file1 = new File(pathname);
         if (!file1.exists()) {
             boolean mkdir = file1.getParentFile().mkdirs();
@@ -69,7 +67,6 @@ public class RdbFileInfo {
             try (FileWriter writer = new FileWriter(file1)) {
                 writer.write("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==");
                 writer.flush();
-                this.file = file1;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
