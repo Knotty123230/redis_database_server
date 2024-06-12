@@ -58,16 +58,19 @@ public class RdbFileInfo {
         }
         this.rdbFile = new RdbFile(path, fileName);
         System.out.println(fileName);
-        this.file = new File((rdbFile.path() + "/" + fileName).substring(1));
+        this.file = new File((rdbFile.path()).substring(1));
         if (!file.exists()){
             boolean mkdirs = file.mkdirs();
             System.out.println(mkdirs);
-            System.out.println(file.getPath());
-            try (FileWriter writer = new FileWriter(file)){
-                writer.write("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==");
-                writer.flush();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            File file1 = new File(file.getPath() + "/" + rdbFile.fileName());
+            if (!file1.exists()){
+                try (FileWriter writer = new FileWriter(file1)){
+                    writer.write("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==");
+                    writer.flush();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         }
     }
