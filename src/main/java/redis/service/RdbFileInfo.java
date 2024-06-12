@@ -27,7 +27,7 @@ public class RdbFileInfo {
     }
 
     public byte[] getContent() {
-        File file = new File(rdbFile.getPath() + "/" + rdbFile.getFileName());
+        File file = new File(rdbFile.getPath() + rdbFile.getFileName());
         byte[] decode;
         try (Stream<String> stringStream = Files.lines(Path.of(file.getPath()))) {
             String rdbFile = stringStream.collect(Collectors.joining());
