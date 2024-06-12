@@ -13,9 +13,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RdbFileInfo {
-    private  RdbFile rdbFile;
+    private RdbFile rdbFile;
     private static RdbFileInfo instance;
     private File file;
+
     private RdbFileInfo() {
 
     }
@@ -36,10 +37,12 @@ public class RdbFileInfo {
             throw new RuntimeException(e);
         }
     }
-    public String getFileName(){
+
+    public String getFileName() {
         return rdbFile.fileName();
     }
-    public String getPath(){
+
+    public String getPath() {
         return rdbFile.path();
     }
 
@@ -47,27 +50,29 @@ public class RdbFileInfo {
         String path = "";
         String fileName = "";
         System.out.println(parameters);
-        if (parameters.containsKey("--dir")){
-             path = parameters.get("--dir");
+        if (parameters.containsKey("--dir")) {
+            path = parameters.get("--dir");
         }
         if (parameters.containsKey("--dbfilename")) {
-             fileName = parameters.get("--dbfilename");
+            fileName = parameters.get("--dbfilename");
         }
-        if (path.isEmpty() || fileName.isEmpty() ){
+        if (path.isEmpty() || fileName.isEmpty()) {
             return;
         }
         this.rdbFile = new RdbFile(path, fileName);
         System.out.println(fileName);
         this.file = new File((rdbFile.path()).substring(1));
-        if (!file.exists()){
+        if (!file.exists()) {
             boolean mkdirs = file.mkdirs();
             System.out.println(mkdirs);
             File file1 = new File(file.getPath() + "/" + rdbFile.fileName());
-            if (!file1.exists()){
-                this.file = file1;
-                try (FileWriter writer = new FileWriter(file1)){
+            if (!file1.exists()) {
+                boolean mkdir = file1.mkdir();
+                System.out.println("mkdir = " + mkdir);
+                try (FileWriter writer = new FileWriter(file1)) {
                     writer.write("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==");
                     writer.flush();
+                    this.file = file1;
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
