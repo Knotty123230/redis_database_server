@@ -58,7 +58,7 @@ public class RdbFileInfo {
         }
         this.rdbFile = new RdbFile(path, fileName);
         System.out.println(fileName);
-        this.file = new File( rdbFile.path() + "/" + rdbFile.fileName().substring(1));
+        this.file = new File(rdbFile.path() + "/" + fileName);
         if (!file.exists()){
             boolean mkdirs = file.mkdirs();
             System.out.println(mkdirs);
