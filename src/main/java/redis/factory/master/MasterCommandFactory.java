@@ -39,7 +39,7 @@ public class MasterCommandFactory implements Factory {
         } else if (command.equals(Command.WAIT)) {
             return new WaitCommandProcessor(replicaSender, replicaReceiver);
         } else if (command.equals(Command.CONFIG)) {
-            return  new ConfigCommandProcessor();
+            return new ConfigCommandProcessor();
         }
         return null;
     }
