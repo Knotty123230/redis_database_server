@@ -27,8 +27,8 @@ public class RdbFileInfo {
     }
 
     public byte[] getContent() {
-        File file = new File(rdbFile.getPath() + rdbFile.getFileName());
-        System.out.println(file.getPath());
+        System.out.println(rdbFile.path() + rdbFile.fileName());
+        File file = new File(rdbFile.path() + rdbFile.fileName());
         byte[] decode;
         try (Stream<String> stringStream = Files.lines(Path.of(file.getPath()))) {
             String rdbFile = stringStream.collect(Collectors.joining());
@@ -39,10 +39,10 @@ public class RdbFileInfo {
         return decode;
     }
     public String getFileName(){
-        return rdbFile.getFileName();
+        return rdbFile.fileName();
     }
     public String getPath(){
-        return rdbFile.getPath();
+        return rdbFile.path();
     }
 
     public void setFile(Map<String, String> parameters) {
