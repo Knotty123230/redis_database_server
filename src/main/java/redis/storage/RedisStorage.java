@@ -13,10 +13,10 @@ public class RedisStorage {
     private final Map<String, Long> timeToExpiration = new ConcurrentHashMap<>();
     private final Map<String, Long> currentTimeForKey = new ConcurrentHashMap<>();
 
-    private final RdbFileReader reader;
+    private final RdbFileReader reader = new RdbFileReader();
 
     private RedisStorage() {
-        reader = new RdbFileReader();
+
     }
 
     public static RedisStorage getInstance() {
@@ -26,6 +26,10 @@ public class RedisStorage {
     public void save(String key, String value) {
         storage.put(key, value);
     }
+     {
+         Map<String, String> stringStringMap = reader.readFile();
+         storage.putAll(stringStringMap);
+     }
 
     public void save(String key, String value, Long time) {
         System.out.println("SAVE RedisStorage: " + key);
@@ -36,6 +40,7 @@ public class RedisStorage {
 
     public String getCommand(String key) {
         System.out.println("GET RedisStorage: " + key);
+
         if (currentTimeForKey.containsKey(key)) {
             System.out.println("Expiration: " + (System.currentTimeMillis() - currentTimeForKey.get(key)));
         }
@@ -47,6 +52,6 @@ public class RedisStorage {
 
 
     public List<String> getKeys() {
-        return reader.readFile();
+        return storage.keySet().stream().toList();
     }
 }

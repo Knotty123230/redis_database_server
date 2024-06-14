@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.lang.System.out;
 
@@ -18,9 +18,9 @@ public class RdbFileReader {
         rdbFileInfo = RdbFileInfo.getInstance();
     }
 
-    public List<String> readFile(){
+    public Map<String, String> readFile(){
         String key = "";
-        List<String> keys = new LinkedList<>();
+        Map<String, String> storage = new HashMap<>();
         try (
                 InputStream fis =
                         new FileInputStream(new File(rdbFileInfo.getPath(), rdbFileInfo.getFileName()))) {
@@ -57,9 +57,6 @@ public class RdbFileReader {
                     case 0xFA:
                         out.println("AUX");
                         break;
-                    default:
-                        out.println("DEFAULT CASE");
-                        break;
                 }
             }
 
@@ -70,16 +67,10 @@ public class RdbFileReader {
                 out.println("value-type = " + b);
                 out.println(" b = " + Integer.toBinaryString(b));
                 out.println("reading keys");
-                int strLength = lengthEncoding(fis, b);
-                b = fis.read();
-                out.println("strLength == " + strLength);
-                if (strLength == 0) {
-                    strLength = b;
-                }
-                out.println("strLength == " + strLength);
-                byte[] bytes = fis.readNBytes(strLength);
-                key = new String(bytes);
-                keys.add(key);
+                key = getKey(fis, b);
+                out.println(key);
+                String value = getValue(fis);
+                storage.put(key, value);
                 break;
             }
         } catch (
@@ -87,8 +78,37 @@ public class RdbFileReader {
             throw new RuntimeException(e);
         }
         out.flush();
-        return keys;
+        return storage;
     }
+
+    private static String getKey(InputStream fis, int b) throws IOException {
+        String key;
+        int strLength = lengthEncoding(fis, b);
+        b = fis.read();
+        out.println("strLength == " + strLength);
+        if (strLength == 0) {
+            strLength = b;
+        }
+        out.println("strLength == " + strLength);
+        byte[] bytes = fis.readNBytes(strLength);
+        key = new String(bytes);
+        return key;
+    }
+
+    private static String getValue(InputStream fis) throws IOException {
+        int strLength;
+        int b;
+        b = fis.read();
+        strLength = lengthEncoding(fis, b);
+        if (strLength == 0){
+            strLength = b;
+        }
+        byte[] bytesValue = fis.readNBytes(strLength);
+        String value = new String(bytesValue);
+        out.println(value);
+        return value;
+    }
+
     private static int lengthEncoding(InputStream is, int b) throws IOException {
         int length = 100;
 
