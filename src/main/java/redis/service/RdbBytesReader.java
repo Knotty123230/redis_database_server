@@ -3,7 +3,7 @@ package redis.service;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-public class RdbReader {
+public class RdbBytesReader {
     public BufferedReader read(BufferedReader bf) {
         try {
 

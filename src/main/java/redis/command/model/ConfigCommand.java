@@ -3,7 +3,7 @@ package redis.command.model;
 public enum ConfigCommand {
     DIR("DIR"),
     DBFILENAME("DBFILENAME");
-    private  final String value;
+    private final String value;
 
     ConfigCommand(String value) {
         this.value = value;

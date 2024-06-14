@@ -1,17 +1,21 @@
 package redis.command.model;
 
 public enum Command {
+    ACK("ACK"),
+    CONFIG("CONFIG"),
     ECHO("ECHO"),
     FULLRESYNC("FULLRESYNC"),
     GET("GET"),
     INFO("INFO"),
+    KEYS("KEYS"),
     PING("PING"),
     PONG("PONG"),
     PSYNC("PSYNC"),
     PX("PX"),
     REPLCONF("REPLCONF"),
     REPLICATION("REPLICATION"),
-    SET("SET"), WAIT("WAIT"), ACK("ACK"), CONFIG("CONFIG");
+    SET("SET"),
+    WAIT("WAIT");
     private final String value;
 
     Command(String value) {

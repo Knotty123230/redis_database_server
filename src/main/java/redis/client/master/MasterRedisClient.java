@@ -3,8 +3,8 @@ package redis.client.master;
 import redis.client.Client;
 import redis.command.CommandHandler;
 import redis.handler.master.MasterCommandHandler;
-import redis.service.ReplicaReceiver;
-import redis.service.ReplicaSender;
+import redis.service.master.ReplicaReceiver;
+import redis.service.master.ReplicaSender;
 
 import java.io.BufferedReader;
 import java.io.IOException;

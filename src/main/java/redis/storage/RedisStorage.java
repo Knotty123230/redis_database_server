@@ -1,5 +1,9 @@
 package redis.storage;
 
+import redis.service.master.RdbFileInfo;
+import redis.service.master.RdbFileReader;
+
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,12 +13,14 @@ public class RedisStorage {
     private final Map<String, Long> timeToExpiration = new ConcurrentHashMap<>();
     private final Map<String, Long> currentTimeForKey = new ConcurrentHashMap<>();
 
+    private final RdbFileReader reader;
+
     private RedisStorage() {
+        reader = new RdbFileReader();
     }
 
     public static RedisStorage getInstance() {
         return redisStorage;
-
     }
 
     public void save(String key, String value) {
@@ -37,5 +43,10 @@ public class RedisStorage {
             return "";
         }
         return storage.get(key);
+    }
+
+
+    public List<String> getKeys() {
+        return reader.readFile();
     }
 }

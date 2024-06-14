@@ -25,6 +25,8 @@ public class CommandUtil {
             return Command.WAIT;
         } else if (remove.toLowerCase().contains(Command.CONFIG.getValue()) || remove.equalsIgnoreCase(Command.CONFIG.getValue())) {
             return Command.CONFIG;
+        } else if (remove.toLowerCase().contains(Command.KEYS.getValue()) || remove.equalsIgnoreCase(Command.KEYS.getValue())) {
+            return Command.KEYS;
         } else return null;
     }
 }

@@ -1,8 +1,9 @@
-package redis;
+package redis.socket;
 
+import jdk.jfr.Category;
 import redis.client.Client;
 import redis.client.master.MasterRedisClient;
-import redis.service.ReplicaReceiver;
+import redis.service.master.ReplicaReceiver;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -29,6 +30,8 @@ public class RedisSocket extends Thread {
                 Thread thread = new Thread(task);
                 thread.start();
             }
+
+
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
         }

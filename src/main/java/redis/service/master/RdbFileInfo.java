@@ -1,20 +1,24 @@
-package redis.service;
+package redis.service.master;
 
 import redis.model.RdbFile;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.System.out;
+
 public class RdbFileInfo {
-    private RdbFile rdbFile;
     private static RdbFileInfo instance;
+    private RdbFile rdbFile;
 
     private RdbFileInfo() {
 
@@ -27,13 +31,17 @@ public class RdbFileInfo {
         return instance;
     }
 
+
+
     public byte[] getContent() {
+        byte[] decode;
         try (Stream<String> stringStream = Files.lines(Path.of(rdbFile.path() + "/" + rdbFile.fileName()))) {
-            String readFile = stringStream.collect(Collectors.joining());
-            return Base64.getDecoder().decode(readFile);
+            String rdbFile = stringStream.collect(Collectors.joining());
+            decode = Base64.getDecoder().decode(rdbFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return decode;
     }
 
     public String getFileName() {
@@ -47,7 +55,7 @@ public class RdbFileInfo {
     public void setFile(Map<String, String> parameters) {
         String path = "";
         String fileName = "";
-        System.out.println(parameters);
+        out.println(parameters);
         if (parameters.containsKey("--dir")) {
             path = parameters.get("--dir");
         }
@@ -58,12 +66,12 @@ public class RdbFileInfo {
             return;
         }
         this.rdbFile = new RdbFile(path, fileName);
-        System.out.println(fileName);
+        out.println(fileName);
         String pathname = rdbFile.path() + "/" + rdbFile.fileName();
         File file1 = new File(pathname);
         if (!file1.exists()) {
             boolean mkdir = file1.getParentFile().mkdirs();
-            System.out.println(mkdir);
+            out.println(mkdir);
             try (FileWriter writer = new FileWriter(file1)) {
                 writer.write("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==");
                 writer.flush();

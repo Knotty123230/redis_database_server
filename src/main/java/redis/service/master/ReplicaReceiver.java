@@ -1,4 +1,4 @@
-package redis.service;
+package redis.service.master;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;

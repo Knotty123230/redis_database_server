@@ -5,7 +5,7 @@ import redis.command.sender.CommandSender;
 import redis.command.sender.PingCommandSender;
 import redis.command.sender.ReplConfCommandSender;
 import redis.parser.CommandParser;
-import redis.service.RdbReader;
+import redis.service.RdbBytesReader;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,7 +14,7 @@ import java.net.Socket;
 
 public class ConnectionHandler {
     private final Socket socket;
-    private final RdbReader reader;
+    private final RdbBytesReader reader;
     private final int port;
     private final CommandParser commandParser;
     private CommandSender commandSender;
@@ -23,7 +23,7 @@ public class ConnectionHandler {
         this.socket = socket;
         commandSender = new PingCommandSender(commandParser);
         this.port = port;
-        this.reader = new RdbReader();
+        this.reader = new RdbBytesReader();
         this.commandParser = commandParser;
     }
 

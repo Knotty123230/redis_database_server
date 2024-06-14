@@ -6,8 +6,8 @@ import redis.command.model.Command;
 import redis.factory.Factory;
 import redis.factory.master.MasterCommandFactory;
 import redis.parser.CommandParser;
-import redis.service.ReplicaReceiver;
-import redis.service.ReplicaSender;
+import redis.service.master.ReplicaReceiver;
+import redis.service.master.ReplicaSender;
 import redis.utils.CommandUtil;
 
 import java.io.IOException;

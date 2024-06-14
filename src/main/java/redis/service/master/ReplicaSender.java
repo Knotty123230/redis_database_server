@@ -1,4 +1,4 @@
-package redis.service;
+package redis.service.master;
 
 import redis.command.model.Command;
 import redis.model.ConnectedReplica;

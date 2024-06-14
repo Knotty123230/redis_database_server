@@ -5,8 +5,8 @@ import redis.command.WaitCommandProcessor;
 import redis.command.master.*;
 import redis.command.model.Command;
 import redis.factory.Factory;
-import redis.service.ReplicaReceiver;
-import redis.service.ReplicaSender;
+import redis.service.master.ReplicaReceiver;
+import redis.service.master.ReplicaSender;
 
 public class MasterCommandFactory implements Factory {
     private final Command command;
@@ -18,7 +18,6 @@ public class MasterCommandFactory implements Factory {
         this.replicaSender = replicaSender;
         this.replicaReceiver = replicaReceiver;
     }
-
 
     public CommandProcessor getInstance() {
         System.out.printf("factory get instance of master command %s%n", command);
@@ -40,6 +39,8 @@ public class MasterCommandFactory implements Factory {
             return new WaitCommandProcessor(replicaSender, replicaReceiver);
         } else if (command.equals(Command.CONFIG)) {
             return new ConfigCommandProcessor();
+        } else if (command.equals(Command.KEYS)) {
+            return new KeysCommandProcessor();
         }
         return null;
     }
