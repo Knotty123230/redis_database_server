@@ -21,9 +21,7 @@ public class KeysCommandProcessor implements CommandProcessor {
     @Override
     public void processCommand(List<String> command, OutputStream os) throws IOException {
         List<String> keys = redisStorage.getKeys();
-        for (String key : keys) {
-            os.write(commandParser.getResponseFromCommandArray(Collections.singletonList(key)).getBytes());
-            os.flush();
-        }
+        os.write(commandParser.getResponseFromCommandArray(keys).getBytes());
+        os.flush();
     }
 }

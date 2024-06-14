@@ -18,7 +18,7 @@ public class RdbFileReader {
         rdbFileInfo = RdbFileInfo.getInstance();
     }
 
-    public Map<String, String> readFile(){
+    public Map<String, String> readFile() {
         String key = "";
         Map<String, String> storage = new HashMap<>();
         try (
@@ -61,17 +61,19 @@ public class RdbFileReader {
             }
 
             out.println("header done");
+            b = fis.read();
             while ((b = fis.read()) != -1) { // value type
                 out.println("value-type = " + b);
-                b = fis.read();
                 out.println("value-type = " + b);
                 out.println(" b = " + Integer.toBinaryString(b));
+                if (!Integer.toBinaryString(b).equals("0")){
+                    break;
+                }
                 out.println("reading keys");
                 key = getKey(fis, b);
                 out.println(key);
                 String value = getValue(fis);
                 storage.put(key, value);
-                break;
             }
         } catch (
                 IOException e) {
@@ -100,7 +102,7 @@ public class RdbFileReader {
         int b;
         b = fis.read();
         strLength = lengthEncoding(fis, b);
-        if (strLength == 0){
+        if (strLength == 0) {
             strLength = b;
         }
         byte[] bytesValue = fis.readNBytes(strLength);
