@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,13 +14,15 @@ import static java.lang.System.out;
 
 public class RdbFileReader {
     private final RdbFileInfo rdbFileInfo;
-
+    private final Map<String, Long> keysExpiration;
     public RdbFileReader() {
         rdbFileInfo = RdbFileInfo.getInstance();
+        keysExpiration = new HashMap<>();
     }
 
     public Map<String, String> readFile() {
         String key = "";
+        Long expiration = null;
         Map<String, String> storage = new HashMap<>();
         try (
                 InputStream fis =
@@ -46,7 +49,9 @@ public class RdbFileReader {
                         out.println("EXPIRETIME");
                         break;
                     case 0xFC:
+
                         out.println("EXPIRETIMEMS");
+
                         break;
                     case 0xFB:
                         out.println("RESIZEDB");
@@ -62,11 +67,17 @@ public class RdbFileReader {
 
             out.println("header done");
             b = fis.read();
-            while ((b = fis.read()) != -1) { // value type
+            while ((b = fis.read()) != -1) {
                 out.println("value-type = " + b);
                 out.println("value-type = " + b);
+                if (b == 0xFC) {
+                    expiration = getExpiration(fis);
+                    out.println("expiration = " + expiration);
+                    b = fis.read();
+                }
                 out.println(" b = " + Integer.toBinaryString(b));
-                if (!Integer.toBinaryString(b).equals("0")){
+
+                if (!Integer.toBinaryString(b).equals("0")) {
                     break;
                 }
                 out.println("reading keys");
@@ -74,6 +85,9 @@ public class RdbFileReader {
                 out.println(key);
                 String value = getValue(fis);
                 storage.put(key, value);
+                if (expiration != null && expiration != 0){
+                    keysExpiration.put(key, expiration);
+                }
             }
         } catch (
                 IOException e) {
@@ -81,6 +95,21 @@ public class RdbFileReader {
         }
         out.flush();
         return storage;
+    }
+
+
+    private Long getExpiration(InputStream fis) {
+        try {
+            byte[] bytes = fis.readNBytes(8);
+            ByteBuffer wrap = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
+            return wrap.getLong();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Map<String, Long> getKeysExpiration() {
+        return keysExpiration;
     }
 
     private static String getKey(InputStream fis, int b) throws IOException {
@@ -115,6 +144,7 @@ public class RdbFileReader {
         int length = 100;
 
         int first2bits = b & 11000000;
+        out.println("first2bits = " + first2bits);
         if (first2bits == 0) {
             out.println("00");
             length = 0;

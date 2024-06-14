@@ -1,6 +1,5 @@
 package redis.storage;
 
-import redis.service.master.RdbFileInfo;
 import redis.service.master.RdbFileReader;
 
 import java.util.List;
@@ -17,6 +16,8 @@ public class RedisStorage {
         RdbFileReader reader = new RdbFileReader();
         Map<String, String> stringStringMap = reader.readFile();
         storage.putAll(stringStringMap);
+        Map<String, Long> keysExpiration = reader.getKeysExpiration();
+        timeToExpiration.putAll(keysExpiration);
     }
 
     public static RedisStorage getInstance() {
@@ -37,15 +38,29 @@ public class RedisStorage {
     public String getCommand(String key) {
         System.out.println("GET RedisStorage: " + key);
 
-        if (currentTimeForKey.containsKey(key)) {
-            System.out.println("Expiration: " + (System.currentTimeMillis() - currentTimeForKey.get(key)));
+        if (timeToExpiration.containsKey(key) && !currentTimeForKey.containsKey(key)) {
+            long currentTime = System.currentTimeMillis();
+            long expirationTime = timeToExpiration.get(key);
+
+            System.out.println("Current Time: " + currentTime);
+            System.out.println("Expiration Time: " + expirationTime);
+
+            if (currentTime > expirationTime) {
+                System.out.println("Key expired: " + key);
+                return "";
+            }
         }
-        if (timeToExpiration.containsKey(key) && (System.currentTimeMillis() - currentTimeForKey.get(key)) > timeToExpiration.get(key)) {
-            return "";
+        if (currentTimeForKey.containsKey(key)){
+            long currTime = System.currentTimeMillis();
+            long expirationTime = timeToExpiration.get(key);
+            long currExpiration = currentTimeForKey.get(key);
+            if (currTime - currExpiration > expirationTime){
+                return "";
+            }
         }
+
         return storage.get(key);
     }
-
 
     public List<String> getKeys() {
         return storage.keySet().stream().toList();
