@@ -43,6 +43,8 @@ public class MasterCommandFactory implements Factory {
             return new KeysCommandProcessor();
         }else if (command.equals(Command.TYPE)) {
             return new TypeCommandProcessor();
+        }else if (command.equals(Command.XADD)) {
+            return new XaddCommandProcessor();
         }
         return null;
     }

@@ -2,6 +2,7 @@ package redis.command.master;
 
 import redis.command.CommandProcessor;
 import redis.command.model.TypeCommand;
+import redis.service.master.XaddStreamService;
 import redis.storage.RedisStorage;
 
 import java.io.IOException;
@@ -10,14 +11,22 @@ import java.util.List;
 
 public class TypeCommandProcessor implements CommandProcessor {
     private final RedisStorage redisStorage;
+    private final XaddStreamService xaddStreamService;
 
     public TypeCommandProcessor() {
         redisStorage = RedisStorage.getInstance();
+        xaddStreamService = XaddStreamService.getInstance();
     }
 
     @Override
     public void processCommand(List<String> command, OutputStream os) throws IOException {
         System.out.println("Process TYPE command: " + command);
+
+        if (xaddStreamService.streamExists(command.getFirst())){
+            os.write(("+stream\r\n").getBytes());
+            os.flush();
+            return;
+        }
         String value = redisStorage.getCommand(command.getFirst());
         if (value == null || value.isEmpty()) {
             os.write(("+" + TypeCommand.NONE.getValue().toLowerCase() + "\r\n").getBytes());
