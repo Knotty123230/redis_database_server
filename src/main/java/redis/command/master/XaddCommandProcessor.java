@@ -29,6 +29,11 @@ public class XaddCommandProcessor implements CommandProcessor {
             value = command.get(i + 1);
         }
         String stream = xaddStreamService.createStream(nameOfStream, id, key, value);
+        if (stream.startsWith("-ERR")) {
+            os.write(stream.getBytes());
+            os.flush();
+            return;
+        }
         os.write(("$" + stream.length() + "\r\n" + stream + "\r\n").getBytes());
         os.flush();
     }
