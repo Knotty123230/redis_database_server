@@ -16,7 +16,7 @@ public enum Command {
     REPLICATION("REPLICATION"),
     SET("SET"),
     WAIT("WAIT"),
-    TYPE("TYPE"), XADD("XADD");
+    TYPE("TYPE"), XADD("XADD"), XRANGE("XRANGE");
     private final String value;
 
     Command(String value) {

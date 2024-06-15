@@ -45,6 +45,8 @@ public class MasterCommandFactory implements Factory {
             return new TypeCommandProcessor();
         }else if (command.equals(Command.XADD)) {
             return new XaddCommandProcessor();
+        }else if (command.equals(Command.XRANGE)) {
+            return new XrangeCommandProcessor();
         }
         return null;
     }
