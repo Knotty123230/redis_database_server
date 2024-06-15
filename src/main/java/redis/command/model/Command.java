@@ -15,7 +15,8 @@ public enum Command {
     REPLCONF("REPLCONF"),
     REPLICATION("REPLICATION"),
     SET("SET"),
-    WAIT("WAIT");
+    WAIT("WAIT"),
+    TYPE("TYPE");
     private final String value;
 
     Command(String value) {

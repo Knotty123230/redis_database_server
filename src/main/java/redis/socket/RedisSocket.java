@@ -1,6 +1,5 @@
 package redis.socket;
 
-import jdk.jfr.Category;
 import redis.client.Client;
 import redis.client.master.MasterRedisClient;
 import redis.service.master.ReplicaReceiver;

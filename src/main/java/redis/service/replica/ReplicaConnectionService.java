@@ -1,7 +1,8 @@
-package redis.handler.replica;
+package redis.service.replica;
 
 import redis.client.Client;
 import redis.client.replica.ReplicaRedisClient;
+import redis.handler.replica.ConnectionHandler;
 import redis.parser.CommandParser;
 
 import java.io.BufferedReader;

@@ -15,101 +15,10 @@ import static java.lang.System.out;
 public class RdbFileReader {
     private final RdbFileInfo rdbFileInfo;
     private final Map<String, Long> keysExpiration;
+
     public RdbFileReader() {
         rdbFileInfo = RdbFileInfo.getInstance();
         keysExpiration = new HashMap<>();
-    }
-
-    public Map<String, String> readFile() {
-        String key = "";
-        Long expiration = null;
-        Map<String, String> storage = new HashMap<>();
-        try (
-                InputStream fis =
-                        new FileInputStream(new File(rdbFileInfo.getPath(), rdbFileInfo.getFileName()))) {
-            byte[] redis = new byte[5];
-            byte[] version = new byte[4];
-            fis.read(redis);
-            fis.read(version);
-            out.println("Magic String = " +
-                    new String(redis, StandardCharsets.UTF_8));
-            out.println("Version = " +
-                    new String(version, StandardCharsets.UTF_8));
-            int b;
-            header:
-            while ((b = fis.read()) != -1) {
-                switch (b) {
-                    case 0xFF:
-                        out.println("EOF");
-                        break;
-                    case 0xFE:
-                        out.println("SELECTDB");
-                        break;
-                    case 0xFD:
-                        out.println("EXPIRETIME");
-                        break;
-                    case 0xFC:
-
-                        out.println("EXPIRETIMEMS");
-
-                        break;
-                    case 0xFB:
-                        out.println("RESIZEDB");
-                        b = fis.read();
-                        fis.readNBytes(lengthEncoding(fis, b));
-                        fis.readNBytes(lengthEncoding(fis, b));
-                        break header;
-                    case 0xFA:
-                        out.println("AUX");
-                        break;
-                }
-            }
-
-            out.println("header done");
-            b = fis.read();
-            while ((b = fis.read()) != -1) {
-                out.println("value-type = " + b);
-                out.println("value-type = " + b);
-                if (b == 0xFC) {
-                    expiration = getExpiration(fis);
-                    out.println("expiration = " + expiration);
-                    b = fis.read();
-                }
-                out.println(" b = " + Integer.toBinaryString(b));
-
-                if (!Integer.toBinaryString(b).equals("0")) {
-                    break;
-                }
-                out.println("reading keys");
-                key = getKey(fis, b);
-                out.println(key);
-                String value = getValue(fis);
-                storage.put(key, value);
-                if (expiration != null && expiration != 0){
-                    keysExpiration.put(key, expiration);
-                }
-            }
-        } catch (
-                IOException e) {
-            throw new RuntimeException(e);
-        }
-        out.flush();
-        return storage;
-    }
-
-
-    private Long getExpiration(InputStream fis) {
-        try {
-            byte[] bytes = fis.readNBytes(8);
-            ByteBuffer wrap = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
-            return wrap.getLong();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Map<String, Long> getKeysExpiration() {
-        return keysExpiration;
     }
 
     private static String getKey(InputStream fis, int b) throws IOException {
@@ -162,5 +71,94 @@ public class RdbFileReader {
             length = 1;
         }
         return length;
+    }
+
+    public Map<String, String> readFile() {
+        String key = "";
+        Long expiration = null;
+        Map<String, String> storage = new HashMap<>();
+        try (
+                InputStream fis =
+                        new FileInputStream(new File(rdbFileInfo.getPath(), rdbFileInfo.getFileName()))) {
+            byte[] redis = new byte[5];
+            byte[] version = new byte[4];
+            fis.read(redis);
+            fis.read(version);
+            out.println("Magic String = " +
+                    new String(redis, StandardCharsets.UTF_8));
+            out.println("Version = " +
+                    new String(version, StandardCharsets.UTF_8));
+            int b;
+            header:
+            while ((b = fis.read()) != -1) {
+                switch (b) {
+                    case 0xFF:
+                        out.println("EOF");
+                        break;
+                    case 0xFE:
+                        out.println("SELECTDB");
+                        break;
+                    case 0xFD:
+                        out.println("EXPIRETIME");
+                        break;
+                    case 0xFC:
+                        out.println("EXPIRETIMEMS");
+                        break;
+                    case 0xFB:
+                        out.println("RESIZEDB");
+                        b = fis.read();
+                        fis.readNBytes(lengthEncoding(fis, b));
+                        fis.readNBytes(lengthEncoding(fis, b));
+                        break header;
+                    case 0xFA:
+                        out.println("AUX");
+                        break;
+                }
+            }
+
+            out.println("header done");
+            b = fis.read();
+            while ((b = fis.read()) != -1) {
+                out.println("value-type = " + b);
+                out.println("value-type = " + b);
+                if (b == 0xFC) {
+                    expiration = getExpiration(fis);
+                    out.println("expiration = " + expiration);
+                    b = fis.read();
+                }
+                out.println(" b = " + Integer.toBinaryString(b));
+
+                if (!Integer.toBinaryString(b).equals("0")) {
+                    break;
+                }
+                out.println("reading keys");
+                key = getKey(fis, b);
+                out.println(key);
+                String value = getValue(fis);
+                storage.put(key, value);
+                if (expiration != null && expiration != 0) {
+                    keysExpiration.put(key, expiration);
+                }
+            }
+        } catch (
+                IOException e) {
+            throw new RuntimeException(e);
+        }
+        out.flush();
+        return storage;
+    }
+
+    private Long getExpiration(InputStream fis) {
+        try {
+            byte[] bytes = fis.readNBytes(8);
+            ByteBuffer wrap = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
+            return wrap.getLong();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Map<String, Long> getKeysExpiration() {
+        return keysExpiration;
     }
 }

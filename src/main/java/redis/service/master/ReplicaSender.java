@@ -33,9 +33,6 @@ public class ReplicaSender implements Closeable {
         return String.valueOf(connectedReplicas.size());
     }
 
-    public boolean isEmptyCommands() {
-        return commands.isEmpty();
-    }
 
     public void start() {
         executorService.submit(this::processCommands);

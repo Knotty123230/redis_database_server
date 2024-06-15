@@ -1,4 +1,4 @@
-package redis.command.replica.counter;
+package redis.command.model.counter;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;

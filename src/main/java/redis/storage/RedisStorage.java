@@ -41,20 +41,16 @@ public class RedisStorage {
         if (timeToExpiration.containsKey(key) && !currentTimeForKey.containsKey(key)) {
             long currentTime = System.currentTimeMillis();
             long expirationTime = timeToExpiration.get(key);
-
-            System.out.println("Current Time: " + currentTime);
-            System.out.println("Expiration Time: " + expirationTime);
-
             if (currentTime > expirationTime) {
                 System.out.println("Key expired: " + key);
                 return "";
             }
         }
-        if (currentTimeForKey.containsKey(key)){
+        if (currentTimeForKey.containsKey(key)) {
             long currTime = System.currentTimeMillis();
             long expirationTime = timeToExpiration.get(key);
             long currExpiration = currentTimeForKey.get(key);
-            if (currTime - currExpiration > expirationTime){
+            if (currTime - currExpiration > expirationTime) {
                 return "";
             }
         }
