@@ -2,10 +2,8 @@ package redis.service.master;
 
 import redis.storage.RedisStorage;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class XaddStreamService {
     private final Map<String, Map<String, String>> stream;
@@ -25,23 +23,39 @@ public class XaddStreamService {
         return streamService;
     }
 
-    public List<Map<String, Map<String, String>>> findValuesByStreamName(String name, List<String> streamKeys) {
-        List<Map<String, Map<String, String>>> valuesByStreamName = new LinkedList<>();
-        Map<String, Map<String, String>> mapByKeys = new HashMap<>();
-        Map<String,String> keyValues = new HashMap<>();
-        Map<String, String> stringStringMap = stream.get(name);
-        for (Map.Entry<String, String> stringStringEntry : stringStringMap.entrySet()) {
-            if (streamKeys.contains(stringStringEntry.getKey())){
-                String key = stringStringEntry.getKey();
-                String href = stringStringEntry.getValue();
-                String value = redisStorage.getCommand(href);
-                keyValues.put(href, value);
-                mapByKeys.put(key, keyValues);
-                valuesByStreamName.add(mapByKeys);
+    public List<Map<String, List<String>>> findValuesByStreamName(String name, List<String> streamKeys) {
+        List<Map<String, List<String>>> result = new ArrayList<>();
+        Map<String, String> existsIdAndKey = stream.get(name);
+        Set<String> ids = streamKeys
+                .stream()
+                .map(it -> it.split("-")[0])
+                .collect(Collectors.toSet());
+        String minValue = streamKeys.stream()
+                .map(it -> it.split("-"))
+                .map(it -> it[1])
+                .sorted()
+                .findFirst()
+                .orElseThrow();
+        if (existsIdAndKey != null) {
+            for (Map.Entry<String, String> entry : existsIdAndKey.entrySet()) {
+                String[] split = entry.getKey().split("-");
+                String existsKey = split[0];
+                if (ids.contains(existsKey)) {
+                    if (Long.parseLong(split[1]) < Long.parseLong(minValue)) continue;
+                    String key = entry.getValue();
+                    String value = redisStorage.getCommand(entry.getValue());
+                    List<String> keyValueList = new ArrayList<>();
+                    keyValueList.add(key);
+                    keyValueList.add(value);
+                    Map<String, List<String>> entryMap = new HashMap<>();
+                    entryMap.put(entry.getKey(), keyValueList);
+                    result.add(entryMap);
+                }
             }
         }
-        return valuesByStreamName;
+        return result;
     }
+
 
     public String createStream(String name, String id, String key, String value) {
         System.out.println("CREATE STREAM: " + name + " " + id + " " + key + " " + value);
