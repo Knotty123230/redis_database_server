@@ -16,6 +16,24 @@ public class XrangeCommandProcessor implements CommandProcessor {
         streamService = StreamService.getInstance();
     }
 
+    private static StringBuilder getResponse(List<Map<String, List<String>>> allKeys) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("*").append(Objects.requireNonNull(allKeys).size()).append("\r\n");
+        for (Map<String, List<String>> entry : allKeys) {
+            for (Map.Entry<String, List<String>> item : entry.entrySet()) {
+                sb.append("*2\r\n");
+                sb.append("$").append(item.getKey().length()).append("\r\n");
+                sb.append(item.getKey()).append("\r\n");
+                sb.append("*").append(item.getValue().size()).append("\r\n");
+                for (String subEntry : item.getValue()) {
+                    sb.append("$").append(subEntry.length()).append("\r\n");
+                    sb.append(subEntry).append("\r\n");
+                }
+            }
+        }
+        return sb;
+    }
+
     @Override
     public void processCommand(List<String> command, OutputStream os) throws IOException {
         System.out.println("Process xrange command: " + command);
@@ -41,23 +59,5 @@ public class XrangeCommandProcessor implements CommandProcessor {
             allKeys = streamService.findValuesByStreamName(name, command);
         }
         return allKeys;
-    }
-
-    private static StringBuilder getResponse(List<Map<String, List<String>>> allKeys) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("*").append(Objects.requireNonNull(allKeys).size()).append("\r\n");
-        for (Map<String, List<String>> entry : allKeys) {
-            for (Map.Entry<String, List<String>> item : entry.entrySet()) {
-                sb.append("*2\r\n");
-                sb.append("$").append(item.getKey().length()).append("\r\n");
-                sb.append(item.getKey()).append("\r\n");
-                sb.append("*").append(item.getValue().size()).append("\r\n");
-                for (String subEntry : item.getValue()) {
-                    sb.append("$").append(subEntry.length()).append("\r\n");
-                    sb.append(subEntry).append("\r\n");
-                }
-            }
-        }
-        return sb;
     }
 }

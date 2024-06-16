@@ -1,7 +1,6 @@
 package redis.factory.master;
 
 import redis.command.CommandProcessor;
-import redis.command.master.WaitCommandProcessor;
 import redis.command.master.*;
 import redis.command.model.Command;
 import redis.factory.Factory;
@@ -41,13 +40,13 @@ public class MasterCommandFactory implements Factory {
             return new ConfigCommandProcessor();
         } else if (command.equals(Command.KEYS)) {
             return new KeysCommandProcessor();
-        }else if (command.equals(Command.TYPE)) {
+        } else if (command.equals(Command.TYPE)) {
             return new TypeCommandProcessor();
-        }else if (command.equals(Command.XADD)) {
+        } else if (command.equals(Command.XADD)) {
             return new XaddCommandProcessor();
-        }else if (command.equals(Command.XRANGE)) {
+        } else if (command.equals(Command.XRANGE)) {
             return new XrangeCommandProcessor();
-        }else if (command.equals(Command.XREAD)) {
+        } else if (command.equals(Command.XREAD)) {
             return new XreadCommandProcessor();
         }
         return null;

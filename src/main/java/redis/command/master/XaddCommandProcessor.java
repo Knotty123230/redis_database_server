@@ -24,6 +24,7 @@ public class XaddCommandProcessor implements CommandProcessor {
         String key = "";
         String value = "";
 
+
         for (int i = 0; i < command.size() - 1; i++) {
             key = command.get(i);
             value = command.get(i + 1);
@@ -34,8 +35,10 @@ public class XaddCommandProcessor implements CommandProcessor {
             os.flush();
             return;
         }
+
         os.write(("$" + stream.length() + "\r\n" + stream + "\r\n").getBytes());
         os.flush();
+        xaddStreamService.getExpireCommand().isAdded(true);
     }
 
 }

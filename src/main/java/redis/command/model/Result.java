@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public  class Result {
-    private List<List<Map<String, Map<String, List<String>>>>> result;
+public class Result {
+    private final List<List<Map<String, Map<String, List<String>>>>> result;
     private List<Map<String, Map<String, List<String>>>> listNames;
     private Map<String, Map<String, List<String>>> mapNames;
     private Map<String, List<String>> mapIds;

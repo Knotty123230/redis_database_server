@@ -22,7 +22,7 @@ public class TypeCommandProcessor implements CommandProcessor {
     public void processCommand(List<String> command, OutputStream os) throws IOException {
         System.out.println("Process TYPE command: " + command);
 
-        if (xaddStreamService.streamExists(command.getFirst())){
+        if (xaddStreamService.streamExists(command.getFirst())) {
             os.write(("+stream\r\n").getBytes());
             os.flush();
             return;

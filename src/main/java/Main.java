@@ -1,7 +1,7 @@
-import redis.service.replica.ReplicaConnectionService;
 import redis.service.ApplicationInfo;
 import redis.service.master.RdbFileInfo;
 import redis.service.master.ReplicaReceiver;
+import redis.service.replica.ReplicaConnectionService;
 import redis.socket.RedisSocket;
 import redis.utils.Settings;
 

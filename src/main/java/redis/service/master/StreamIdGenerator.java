@@ -2,9 +2,7 @@ package redis.service.master;
 
 public class StreamIdGenerator {
     public String generateFullId() {
-        StringBuilder id = new StringBuilder();
-        id.append(System.currentTimeMillis()).append("-").append("0");
-        return id.toString();
+        return System.currentTimeMillis() + "-" + "0";
     }
 
     public String generateId(String id, String lastRecordId) {
