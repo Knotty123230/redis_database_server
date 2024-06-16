@@ -24,24 +24,32 @@ public class XaddStreamService {
     }
 
     public List<Map<String, List<String>>> findValuesByStreamName(String name, List<String> streamKeys) {
+        return findValuesByCriteria(name, streamKeys, true);
+    }
+
+    public List<Map<String, List<String>>> findValuesNotBiggerThenId(String name, List<String> streamKeys) {
+        return findValuesByCriteria(name, streamKeys, false);
+    }
+
+    private List<Map<String, List<String>>> findValuesByCriteria(String name, List<String> streamKeys, boolean isMinCriteria) {
         List<Map<String, List<String>>> result = new ArrayList<>();
+        Set<String> ids = getFirstPartOfId(streamKeys);
+        String boundaryValue = isMinCriteria ? getMinValue(streamKeys) : getMaxValue(streamKeys);
         Map<String, String> existsIdAndKey = stream.get(name);
-        Set<String> ids = streamKeys
-                .stream()
-                .map(it -> it.split("-")[0])
-                .collect(Collectors.toSet());
-        String minValue = streamKeys.stream()
-                .map(it -> it.split("-"))
-                .map(it -> it[1])
-                .sorted()
-                .findFirst()
-                .orElseThrow();
+
         if (existsIdAndKey != null) {
             for (Map.Entry<String, String> entry : existsIdAndKey.entrySet()) {
                 String[] split = entry.getKey().split("-");
                 String existsKey = split[0];
+
                 if (ids.contains(existsKey)) {
-                    if (Long.parseLong(split[1]) < Long.parseLong(minValue)) continue;
+                    long entryValue = Long.parseLong(split[1]);
+                    long boundary = Long.parseLong(boundaryValue);
+
+                    if ((isMinCriteria && entryValue < boundary) || (!isMinCriteria && entryValue > boundary)) {
+                        continue;
+                    }
+
                     String key = entry.getValue();
                     String value = redisStorage.getCommand(entry.getValue());
                     List<String> keyValueList = new ArrayList<>();
@@ -54,6 +62,31 @@ public class XaddStreamService {
             }
         }
         return result;
+    }
+
+    private String getMaxValue(List<String> streamKeys) {
+        return streamKeys
+                .stream()
+                .map(it -> it.split("-"))
+                .map(it -> it[1])
+                .max(Comparator.naturalOrder())
+                .orElseThrow();
+    }
+
+    private static Set<String> getFirstPartOfId(List<String> streamKeys) {
+        return streamKeys
+                .stream()
+                .map(it -> it.split("-")[0])
+                .collect(Collectors.toSet());
+    }
+
+    private static String getMinValue(List<String> streamKeys) {
+        return streamKeys
+                .stream()
+                .map(it -> it.split("-"))
+                .map(it -> it[1])
+                .min(Comparator.naturalOrder())
+                .orElseThrow();
     }
 
 
