@@ -24,45 +24,61 @@ public class XaddStreamService {
     }
 
     public List<Map<String, List<String>>> findValuesByStreamName(String name, List<String> streamKeys) {
-        return findValuesByCriteria(name, streamKeys, true);
+        return findValues(name, streamKeys, ValueCondition.GREATER_OR_EQUAL);
     }
 
     public List<Map<String, List<String>>> findValuesNotBiggerThenId(String name, List<String> streamKeys) {
-        return findValuesByCriteria(name, streamKeys, false);
+        return findValues(name, streamKeys, ValueCondition.LESS_OR_EQUAL);
     }
 
-    private List<Map<String, List<String>>> findValuesByCriteria(String name, List<String> streamKeys, boolean isMinCriteria) {
+    public List<Map<String, List<String>>> findValuesBiggerThenId(String name, List<String> streamKeys) {
+        return findValues(name, streamKeys, ValueCondition.GREATER);
+    }
+
+    private enum ValueCondition {
+        GREATER, LESS_OR_EQUAL, GREATER_OR_EQUAL
+    }
+
+    private List<Map<String, List<String>>> findValues(String name, List<String> streamKeys, ValueCondition condition) {
         List<Map<String, List<String>>> result = new ArrayList<>();
         Set<String> ids = getFirstPartOfId(streamKeys);
-        String boundaryValue = isMinCriteria ? getMinValue(streamKeys) : getMaxValue(streamKeys);
+        String comparisonValue = condition == ValueCondition.LESS_OR_EQUAL ? getMaxValue(streamKeys) : getMinValue(streamKeys);
         Map<String, String> existsIdAndKey = stream.get(name);
 
         if (existsIdAndKey != null) {
             for (Map.Entry<String, String> entry : existsIdAndKey.entrySet()) {
                 String[] split = entry.getKey().split("-");
                 String existsKey = split[0];
-
                 if (ids.contains(existsKey)) {
-                    long entryValue = Long.parseLong(split[1]);
-                    long boundary = Long.parseLong(boundaryValue);
-
-                    if ((isMinCriteria && entryValue < boundary) || (!isMinCriteria && entryValue > boundary)) {
-                        continue;
-                    }
-
-                    String key = entry.getValue();
-                    String value = redisStorage.getCommand(entry.getValue());
-                    List<String> keyValueList = new ArrayList<>();
-                    keyValueList.add(key);
-                    keyValueList.add(value);
-                    Map<String, List<String>> entryMap = new HashMap<>();
-                    entryMap.put(entry.getKey(), keyValueList);
-                    result.add(entryMap);
+                    long entryId = Long.parseLong(split[1]);
+                    long comparisonId = Long.parseLong(comparisonValue);
+                    if (shouldSkip(entryId, comparisonId, condition)) continue;
+                    result.add(createEntryMap(entry));
                 }
             }
         }
         return result;
     }
+
+    private boolean shouldSkip(long entryId, long comparisonId, ValueCondition condition) {
+        return switch (condition) {
+            case GREATER, GREATER_OR_EQUAL -> entryId < comparisonId;
+            case LESS_OR_EQUAL -> entryId > comparisonId;
+            default -> false;
+        };
+    }
+
+    private Map<String, List<String>> createEntryMap(Map.Entry<String, String> entry) {
+        String key = entry.getValue();
+        String value = redisStorage.getCommand(key);
+        List<String> keyValueList = new ArrayList<>();
+        keyValueList.add(key);
+        keyValueList.add(value);
+        Map<String, List<String>> entryMap = new HashMap<>();
+        entryMap.put(entry.getKey(), keyValueList);
+        return entryMap;
+    }
+
 
     private String getMaxValue(List<String> streamKeys) {
         return streamKeys
@@ -81,11 +97,11 @@ public class XaddStreamService {
     }
 
     private static String getMinValue(List<String> streamKeys) {
-        return streamKeys
-                .stream()
+        return streamKeys.stream()
                 .map(it -> it.split("-"))
                 .map(it -> it[1])
-                .min(Comparator.naturalOrder())
+                .sorted()
+                .findFirst()
                 .orElseThrow();
     }
 

@@ -20,16 +20,25 @@ public class XrangeCommandProcessor implements CommandProcessor {
     public void processCommand(List<String> command, OutputStream os) throws IOException {
         System.out.println("Process xrange command: " + command);
         String name = command.removeFirst();
-        List<Map<String, List<String>>> allKeys = null;
+        List<Map<String, List<String>>> allKeys;
         if (command.getFirst().equals("-")) {
             String minus = command.removeFirst();
             allKeys = xaddStreamService.findValuesNotBiggerThenId(name, command);
+        } else if (command.getLast().equals("+")) {
+            String s = command.removeLast();
+            allKeys = xaddStreamService.findValuesBiggerThenId(name, command);
         } else {
             allKeys = xaddStreamService.findValuesByStreamName(name, command);
         }
+        StringBuilder sb = getResponse(allKeys);
 
+        System.out.println(sb);
+        os.write(sb.toString().getBytes());
+        os.flush();
+    }
+
+    private static StringBuilder getResponse(List<Map<String, List<String>>> allKeys) {
         StringBuilder sb = new StringBuilder();
-
         sb.append("*").append(Objects.requireNonNull(allKeys).size()).append("\r\n");
         for (Map<String, List<String>> entry : allKeys) {
             for (Map.Entry<String, List<String>> item : entry.entrySet()) {
@@ -43,9 +52,6 @@ public class XrangeCommandProcessor implements CommandProcessor {
                 }
             }
         }
-
-        System.out.println(sb.toString());
-        os.write(sb.toString().getBytes());
-        os.flush();
+        return sb;
     }
 }
