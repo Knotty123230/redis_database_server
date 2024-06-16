@@ -74,7 +74,6 @@ public class StreamService {
     }
 
 
-
     public List<List<Map<String, Map<String, List<String>>>>> findValuesByStreamNameBiggerThenId(List<String> names, List<String> command) {
         Result res = getResult();
         for (String name : names) {
