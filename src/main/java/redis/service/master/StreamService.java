@@ -1,5 +1,6 @@
 package redis.service.master;
 
+import redis.command.model.Result;
 import redis.storage.RedisStorage;
 
 import java.util.*;
@@ -39,28 +40,43 @@ public class StreamService {
         return findValues(name, streamKeys, ValueCondition.GREATER);
     }
 
-    public List<List<Map<String, Map<String, List<String>>>>> findValuesByStreamNameBiggerThenId(String name, List<String> command) {
+    public List<List<Map<String, Map<String, List<String>>>>> findValuesByStreamNameBiggerThenId(List<String> names, List<String> command) {
+        Result res = getResult();
+        System.out.println("process command stream findValuesByStreamNameBiggerThenId: " + command);
+        System.out.printf("%s", names);
+        for (String name : names) {
+            res.setMapNames(new HashMap<>());
+            res.setMapIds(new HashMap<>());
+            res.setListNames(new LinkedList<>());
+            long startId = Long.parseLong(command.removeFirst().split("-")[1]);
+
+            Map<String, String> streamEntries = stream.get(name);
+            for (Map.Entry<String, String> entry : streamEntries.entrySet()) {
+                String href = entry.getValue();
+                long key = Long.parseLong(entry.getKey().split("-")[1]);
+                if (startId > key) continue;
+                List<String> list = new LinkedList<>();
+                String value = redisStorage.getCommand(href);
+                list.add(href);
+                list.add(value);
+                res.mapIds().put(entry.getKey(), list);
+            }
+            res.mapNames().put(name, res.mapIds());
+            res.listNames().add(res.mapNames());
+            res.result().add(res.listNames());
+        }
+        return res.result();
+    }
+
+    private static Result getResult() {
         List<List<Map<String, Map<String, List<String>>>>> result = new ArrayList<>();
         List<Map<String, Map<String, List<String>>>> listNames = new LinkedList<>();
         Map<String, Map<String, List<String>>> mapNames = new HashMap<>();
         Map<String, List<String>> mapIds = new HashMap<>();
-        Long startId = Long.parseLong(command.getFirst().split("-")[1]);
-        Map<String, String> streamEntries = stream.get(name);
-        for (Map.Entry<String, String> entry : streamEntries.entrySet()) {
-            String href = entry.getValue();
-            long key = Long.parseLong(entry.getKey().split("-")[1]);
-            if (startId > key) continue;
-            List<String> list = new LinkedList<>();
-            String value = redisStorage.getCommand(href);
-            list.add(href);
-            list.add(value);
-            mapIds.put(entry.getKey(), list);
-        }
-        mapNames.put(name, mapIds);
-        listNames.add(mapNames);
-        result.add(listNames);
-        return result;
+        return new Result(result, listNames, mapNames, mapIds);
     }
+
+
 
     private enum ValueCondition {
         GREATER, LESS_OR_EQUAL, GREATER_OR_EQUAL
@@ -71,7 +87,6 @@ public class StreamService {
         Set<String> ids = getFirstPartOfId(streamKeys);
         String comparisonValue = condition == ValueCondition.LESS_OR_EQUAL ? getMaxValue(streamKeys) : getMinValue(streamKeys);
         Map<String, String> existsIdAndKey = stream.get(name);
-
         if (existsIdAndKey != null) {
             for (Map.Entry<String, String> entry : existsIdAndKey.entrySet()) {
                 String[] split = entry.getKey().split("-");
