@@ -1,7 +1,7 @@
 package redis.command.master;
 
 import redis.command.CommandProcessor;
-import redis.service.master.XaddStreamService;
+import redis.service.master.StreamService;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public class XrangeCommandProcessor implements CommandProcessor {
-    private final XaddStreamService xaddStreamService;
+    private final StreamService streamService;
 
     public XrangeCommandProcessor() {
-        xaddStreamService = XaddStreamService.getInstance();
+        streamService = StreamService.getInstance();
     }
 
     @Override
@@ -21,20 +21,26 @@ public class XrangeCommandProcessor implements CommandProcessor {
         System.out.println("Process xrange command: " + command);
         String name = command.removeFirst();
         List<Map<String, List<String>>> allKeys;
-        if (command.getFirst().equals("-")) {
-            String minus = command.removeFirst();
-            allKeys = xaddStreamService.findValuesNotBiggerThenId(name, command);
-        } else if (command.getLast().equals("+")) {
-            String s = command.removeLast();
-            allKeys = xaddStreamService.findValuesBiggerThenId(name, command);
-        } else {
-            allKeys = xaddStreamService.findValuesByStreamName(name, command);
-        }
+        allKeys = findKeys(command, name);
         StringBuilder sb = getResponse(allKeys);
 
         System.out.println(sb);
         os.write(sb.toString().getBytes());
         os.flush();
+    }
+
+    private List<Map<String, List<String>>> findKeys(List<String> command, String name) {
+        List<Map<String, List<String>>> allKeys;
+        if (command.getFirst().equals("-")) {
+            String minus = command.removeFirst();
+            allKeys = streamService.findValuesNotBiggerThenId(name, command);
+        } else if (command.getLast().equals("+")) {
+            String s = command.removeLast();
+            allKeys = streamService.findValuesBiggerThenId(name, command);
+        } else {
+            allKeys = streamService.findValuesByStreamName(name, command);
+        }
+        return allKeys;
     }
 
     private static StringBuilder getResponse(List<Map<String, List<String>>> allKeys) {

@@ -2,18 +2,18 @@ package redis.command.master;
 
 import redis.command.CommandProcessor;
 import redis.parser.CommandParser;
-import redis.service.master.XaddStreamService;
+import redis.service.master.StreamService;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
 public class XaddCommandProcessor implements CommandProcessor {
-    private final XaddStreamService xaddStreamService;
+    private final StreamService xaddStreamService;
     private final CommandParser commandParser;
 
     public XaddCommandProcessor() {
-        xaddStreamService = XaddStreamService.getInstance();
+        xaddStreamService = StreamService.getInstance();
         this.commandParser = new CommandParser();
     }
 

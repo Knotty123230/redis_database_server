@@ -47,6 +47,8 @@ public class MasterCommandFactory implements Factory {
             return new XaddCommandProcessor();
         }else if (command.equals(Command.XRANGE)) {
             return new XrangeCommandProcessor();
+        }else if (command.equals(Command.XREAD)) {
+            return new XreadCommandProcessor();
         }
         return null;
     }

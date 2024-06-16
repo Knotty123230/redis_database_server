@@ -33,6 +33,8 @@ public class CommandUtil {
             return Command.XADD;
         } else if (remove.toLowerCase().contains(Command.XRANGE.getValue()) || remove.equalsIgnoreCase(Command.XRANGE.getValue())) {
             return Command.XRANGE;
+        } else if (remove.toLowerCase().contains(Command.XREAD.getValue()) || remove.equalsIgnoreCase(Command.XREAD.getValue())) {
+            return Command.XREAD;
         } else return null;
     }
 }
