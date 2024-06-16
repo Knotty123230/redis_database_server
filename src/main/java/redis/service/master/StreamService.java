@@ -81,14 +81,21 @@ public class StreamService {
             res.setMapNames(new HashMap<>());
             res.setMapIds(new HashMap<>());
             res.setListNames(new LinkedList<>());
-            String id = command.removeFirst();
-            long startId = Long.parseLong(id.split("-")[1]);
+            String id = command.isEmpty() ? "" : command.removeFirst();
+            long startId = id.isEmpty() ? 0 : Long.parseLong(id.split("-")[1]);
 
             Map<String, String> streamEntries = stream.get(name);
+            String string = streamEntries.keySet()
+                    .stream()
+                    .map(it -> it.split("-")[1])
+                    .max(Comparator.naturalOrder())
+                    .orElseThrow();
+            System.out.println(string);
             for (Map.Entry<String, String> entry : streamEntries.entrySet()) {
                 String href = entry.getValue();
                 long key = Long.parseLong(entry.getKey().split("-")[1]);
-                if (startId >= key) continue;
+                boolean a = startId == 0 ? key != Long.parseLong(string) : startId >= key;
+                if (a) continue;
                 List<String> list = new LinkedList<>();
                 String value = redisStorage.getCommand(href);
                 list.add(href);

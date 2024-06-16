@@ -27,7 +27,10 @@ public class XreadCommandProcessor implements CommandProcessor {
         long currentTimeMillis = System.currentTimeMillis();
         List<String> names = new LinkedList<>();
         if (firstWord.equalsIgnoreCase("block")) {
-            System.out.println("block");
+            if (command.getLast().equalsIgnoreCase("$")) {
+                String s = command.removeLast();
+                System.out.println(command);
+            }
             String time = command.removeFirst();
             firstWord = command.removeFirst();
             streamService.getExpireCommand().setReady(true);
@@ -37,6 +40,7 @@ public class XreadCommandProcessor implements CommandProcessor {
 
         }
         if (!firstWord.equalsIgnoreCase("streams")) return;
+
         for (String s : command) {
             char[] charArray = s.toCharArray();
             char firsChar = charArray[0];
