@@ -1,6 +1,6 @@
 package redis.service.master;
 
-import redis.command.model.Command;
+import redis.model.Command;
 import redis.model.ConnectedReplica;
 
 import java.io.Closeable;

@@ -1,7 +1,7 @@
 package redis.command.master;
 
 import redis.command.CommandProcessor;
-import redis.command.model.TypeCommand;
+import redis.model.TypeCommand;
 import redis.service.master.StreamService;
 import redis.storage.RedisStorage;
 

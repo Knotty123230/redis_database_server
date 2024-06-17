@@ -47,7 +47,6 @@ public class CommandParser {
             ArrayList<String> commands = new ArrayList<>();
             if (line.startsWith("*")) {
                 String substring = line.substring(1);
-                System.out.println("Array of commands length: " + substring);
                 for (int i = 0; i < Integer.parseInt(substring); i++) {
                     bufferedReader.readLine();
                     String nextCommand = bufferedReader.readLine();

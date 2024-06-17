@@ -2,7 +2,7 @@ package redis.factory.master;
 
 import redis.command.CommandProcessor;
 import redis.command.master.*;
-import redis.command.model.Command;
+import redis.model.Command;
 import redis.factory.Factory;
 import redis.service.master.ReplicaReceiver;
 import redis.service.master.ReplicaSender;

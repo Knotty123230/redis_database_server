@@ -1,7 +1,7 @@
 package redis.command.replica;
 
 import redis.command.CommandProcessor;
-import redis.command.model.Command;
+import redis.model.Command;
 import redis.storage.RedisStorage;
 
 import java.io.OutputStream;

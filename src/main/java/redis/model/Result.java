@@ -1,4 +1,4 @@
-package redis.command.model;
+package redis.model;
 
 import java.util.List;
 import java.util.Map;

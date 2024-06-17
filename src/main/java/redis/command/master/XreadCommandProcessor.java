@@ -24,7 +24,6 @@ public class XreadCommandProcessor implements CommandProcessor {
     public void processCommand(List<String> command, OutputStream os) throws IOException {
         System.out.println("process xread command: " + command);
         String firstWord = command.removeFirst();
-        long currentTimeMillis = System.currentTimeMillis();
         List<String> names = new LinkedList<>();
         if (firstWord.equalsIgnoreCase("block")) {
             if (command.getLast().equalsIgnoreCase("$")) {
@@ -37,14 +36,13 @@ public class XreadCommandProcessor implements CommandProcessor {
             ExpireCommand expireCommand = streamService.getExpireCommand();
             while (!expireCommand.getIsAdded()) {
             }
-
         }
         if (!firstWord.equalsIgnoreCase("streams")) return;
-
         for (String s : command) {
             char[] charArray = s.toCharArray();
             char firsChar = charArray[0];
             if (Character.isDigit(firsChar)) break;
+
             names.add(s);
         }
         for (String name : names) {

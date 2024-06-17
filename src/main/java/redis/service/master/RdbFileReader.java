@@ -29,7 +29,6 @@ public class RdbFileReader {
         if (strLength == 0) {
             strLength = b;
         }
-        out.println("strLength == " + strLength);
         byte[] bytes = fis.readNBytes(strLength);
         key = new String(bytes);
         return key;

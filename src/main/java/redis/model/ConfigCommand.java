@@ -1,4 +1,4 @@
-package redis.command.model;
+package redis.model;
 
 public enum ConfigCommand {
     DIR("DIR"),

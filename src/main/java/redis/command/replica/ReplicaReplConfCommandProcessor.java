@@ -1,8 +1,8 @@
 package redis.command.replica;
 
 import redis.command.CommandProcessor;
-import redis.command.model.Command;
-import redis.command.model.counter.CommandByteCounter;
+import redis.model.Command;
+import redis.model.CommandByteCounter;
 import redis.parser.CommandParser;
 
 import java.io.IOException;

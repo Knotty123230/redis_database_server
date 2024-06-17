@@ -1,6 +1,6 @@
 package redis.utils;
 
-import redis.command.model.Command;
+import redis.model.Command;
 
 public class CommandUtil {
     public static Command getCommand(String remove) {

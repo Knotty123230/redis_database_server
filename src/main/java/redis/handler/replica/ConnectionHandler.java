@@ -1,6 +1,6 @@
 package redis.handler.replica;
 
-import redis.command.model.Command;
+import redis.model.Command;
 import redis.command.sender.CommandSender;
 import redis.command.sender.PingCommandSender;
 import redis.command.sender.ReplConfCommandSender;

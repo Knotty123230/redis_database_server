@@ -1,6 +1,6 @@
 package redis.command.sender;
 
-import redis.command.model.Command;
+import redis.model.Command;
 import redis.parser.CommandParser;
 
 import java.io.BufferedReader;

@@ -1,7 +1,7 @@
 package redis.command.master;
 
 import redis.command.CommandProcessor;
-import redis.command.model.Command;
+import redis.model.Command;
 import redis.service.master.ReplicaReceiver;
 
 import java.io.IOException;

@@ -1,8 +1,10 @@
 package redis.factory.replica;
 
 import redis.command.CommandProcessor;
-import redis.command.model.Command;
-import redis.command.replica.*;
+import redis.model.Command;
+import redis.command.replica.ReplicaFullResyncCommandProcessor;
+import redis.command.replica.ReplicaReplConfCommandProcessor;
+import redis.command.replica.ReplicaSetCommandProcessor;
 import redis.factory.Factory;
 
 public class ReplicaCommandFactory implements Factory {
@@ -15,16 +17,8 @@ public class ReplicaCommandFactory implements Factory {
     @Override
     public CommandProcessor getInstance() {
         System.out.println("ReplicaCommandFactory: " + command.getValue());
-        if (command.equals(Command.PING)) {
-            return new ReplicaPingCommandProcessor();
-        } else if (command.equals(Command.ECHO)) {
-            return new ReplicaEchoCommandProcessor();
-        } else if (command.equals(Command.SET)) {
+        if (command.equals(Command.SET)) {
             return new ReplicaSetCommandProcessor();
-        } else if (command.equals(Command.GET)) {
-            return new ReplicaGetCommandProcessor();
-        } else if (command.equals(Command.INFO)) {
-            return new ReplicaEchoCommandProcessor();
         } else if (command.equals(Command.REPLCONF)) {
             return new ReplicaReplConfCommandProcessor();
         } else if (command.equals(Command.PSYNC)) {

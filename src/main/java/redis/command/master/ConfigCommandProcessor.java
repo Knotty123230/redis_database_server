@@ -1,7 +1,7 @@
 package redis.command.master;
 
 import redis.command.CommandProcessor;
-import redis.command.model.ConfigCommand;
+import redis.model.ConfigCommand;
 import redis.parser.CommandParser;
 import redis.service.master.RdbFileInfo;
 
