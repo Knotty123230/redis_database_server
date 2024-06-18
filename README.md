@@ -53,19 +53,6 @@ cd redis_database_server</code></pre>
 <p>Start a replica server on port 6380, replicating from the primary server:</p>
 <pre><code>java -jar build/libs/redis-replication-java.jar --port 6380 --replicaof 127.0.0.1 6379</code></pre>
 
-### Persistence with RDB Files
-
-<p>Redis supports RDB (Redis Database Backup) files for data persistence. By default, the RDB file is created in the working directory of the Redis server. You can configure the location and frequency of RDB snapshots in the Redis configuration file (<code>redis.conf</code>).</p>
-
-<p>To manually trigger an RDB save, run:</p>
-<pre><code>redis-cli save</code></pre>
-
-<p>To configure automated snapshots, edit the <code>redis.conf</code> file:</p>
-<pre><code>save 900 1
-save 300 10
-save 60 10000</code></pre>
-
-## Configuration
 
 ### Command-Line Options
 
