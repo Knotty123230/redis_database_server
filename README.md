@@ -48,10 +48,10 @@ cd redis_database_server</code></pre>
 #### Example
 
 <p>Start the primary server on port 6379:</p>
-<pre><code>java -jar build/libs/redis-replication-java.jar --port 6379</code></pre>
+<pre><code>java -jar target/redis-replication-java.jar --port 6379</code></pre>
 
 <p>Start a replica server on port 6380, replicating from the primary server:</p>
-<pre><code>java -jar build/libs/redis-replication-java.jar --port 6380 --replicaof 127.0.0.1 6379</code></pre>
+<pre><code>java -jar target/redis-replication-java.jar --port 6380 --replicaof 127.0.0.1 6379</code></pre>
 
 
 ### Command-Line Options
