@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
 public class ReplicaSender implements Closeable {
     private final Queue<ConnectedReplica> connectedReplicas;
     private final Queue<String> commands;

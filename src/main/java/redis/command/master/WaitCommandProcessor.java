@@ -26,7 +26,6 @@ public class WaitCommandProcessor implements CommandProcessor {
         try {
             int numSlaves = Integer.parseInt(command.getFirst());
             long timeout = Long.parseLong(command.get(1));
-
             long startTime = System.currentTimeMillis();
 
             if (0 == replicaSender.getCountCommands()) {

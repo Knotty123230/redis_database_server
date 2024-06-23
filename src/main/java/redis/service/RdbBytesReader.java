@@ -6,8 +6,6 @@ import java.io.IOException;
 public class RdbBytesReader {
     public BufferedReader read(BufferedReader bf) {
         try {
-
-
             String s = bf.readLine();
             String substring = s.substring(1);
             int charsToSkip = Integer.parseInt(substring) - 1;

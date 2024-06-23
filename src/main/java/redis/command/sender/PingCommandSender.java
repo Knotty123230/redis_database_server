@@ -18,6 +18,5 @@ public class PingCommandSender extends CommandSender {
         byte[] bytes = commandParser.getResponseFromCommandArray(List.of(Command.PING.getValue().toLowerCase())).getBytes();
         outputStream.write(bytes);
         outputStream.flush();
-
     }
 }
