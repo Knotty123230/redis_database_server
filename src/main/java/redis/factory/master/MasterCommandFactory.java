@@ -48,6 +48,8 @@ public class MasterCommandFactory implements Factory {
             return new XrangeCommandProcessor();
         } else if (command.equals(Command.XREAD)) {
             return new XreadCommandProcessor();
+        }else if (command.equals(Command.INCR)) {
+            return new IncrCommandProcessor();
         }
         return null;
     }
