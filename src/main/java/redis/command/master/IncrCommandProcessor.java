@@ -26,7 +26,14 @@ public class IncrCommandProcessor implements CommandProcessor {
             redisStorage.save(key, String.valueOf(increment));
             return;
         }
-        int resp = Integer.parseInt(value) + 1;
+        int resp;
+        try {
+            resp = Integer.parseInt(value) + 1;
+        } catch (Exception e) {
+            os.write("-ERR value is not an integer or out of range\r\n".getBytes());
+            os.flush();
+            return;
+        }
 
         os.write((":" + resp + "\r\n").getBytes());
         os.flush();
