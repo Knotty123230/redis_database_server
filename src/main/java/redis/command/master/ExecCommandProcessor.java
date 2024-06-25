@@ -29,6 +29,9 @@ public class ExecCommandProcessor implements CommandProcessor {
             return;
         }
         transactionMultiCommandService.stopTransaction();
+        if (transactionMultiCommandService.isDiscard()) {
+            return;
+        }
         Queue<List<String>> commandsQueue = transactionMultiCommandService.getCommandsQueue();
         if (commandsQueue.isEmpty()) {
             os.write(("*" + 0 + "\r\n").getBytes());

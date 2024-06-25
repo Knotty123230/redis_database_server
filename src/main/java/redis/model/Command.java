@@ -20,7 +20,7 @@ public enum Command {
     WAIT("WAIT"),
     XADD("XADD"),
     XRANGE("XRANGE"),
-    XREAD("XREAD"), MULTI("MULTI"), EXEC("EXEC");
+    XREAD("XREAD"), MULTI("MULTI"), EXEC("EXEC"), DISCARD("DISCARD");
 
     private final String value;
 

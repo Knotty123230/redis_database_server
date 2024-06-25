@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class TransactionMultiCommandService {
     private static volatile TransactionMultiCommandService transactionMultiCommandService;
     private final AtomicBoolean atomicBoolean;
+    private final AtomicBoolean isDiscard;
     private final Queue<List<String>> commandsQueue;
     private final AtomicBoolean isMulti;
     private final AtomicReference<OutputStream> client;
@@ -19,8 +20,14 @@ public class TransactionMultiCommandService {
         atomicBoolean = new AtomicBoolean(false);
         isMulti = new AtomicBoolean(false);
         client = new AtomicReference<>();
+        isDiscard = new AtomicBoolean(false);
     }
-
+    public void setIsDiscard(boolean isDiscard) {
+        this.isDiscard.set(isDiscard);
+    }
+    public boolean isDiscard() {
+        return isDiscard.get();
+    }
     public static TransactionMultiCommandService getInstance() {
         if (transactionMultiCommandService == null) {
             synchronized (TransactionMultiCommandService.class) {

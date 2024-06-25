@@ -1,10 +1,8 @@
 package redis.factory.master;
 
-import redis.command.CommandHandler;
 import redis.command.CommandProcessor;
 import redis.command.master.*;
 import redis.factory.Factory;
-import redis.handler.master.MasterCommandHandler;
 import redis.model.Command;
 import redis.service.master.ReplicaReceiver;
 import redis.service.master.ReplicaSender;
@@ -59,6 +57,8 @@ public class MasterCommandFactory implements Factory {
             return new MultiCommandProcessor(transactionMultiCommandService);
         }else if (command.equals(Command.EXEC)) {
             return new ExecCommandProcessor(transactionMultiCommandService);
+        }else if (command.equals(Command.DISCARD)) {
+            return new DiscardCommandProcessor(transactionMultiCommandService);
         }
         return null;
     }

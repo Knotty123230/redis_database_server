@@ -56,7 +56,7 @@ public class MasterCommandHandler implements CommandHandler {
     }
 
     private boolean addCommandToQueue(Command command, ArrayList<String> replicaCommand) {
-        if (transactionMultiCommandService.isTransactionStarted() && !Objects.equals(command, Command.EXEC) && Objects.equals(os, transactionMultiCommandService.getClient())){
+        if (transactionMultiCommandService.isTransactionStarted() && !Objects.equals(command, Command.EXEC) && Objects.equals(os, transactionMultiCommandService.getClient()) && !Objects.equals(command, Command.DISCARD) && !transactionMultiCommandService.isDiscard()){
 //            if (command.equals(Command.GET) || command.equals(Command.KEYS)) return false;
             transactionMultiCommandService.addCommandToQueue(replicaCommand);
             try {
