@@ -5,6 +5,7 @@ import redis.command.CommandProcessor;
 import redis.factory.Factory;
 import redis.factory.master.MasterCommandFactory;
 import redis.model.Command;
+import redis.model.Transaction;
 import redis.parser.CommandParser;
 import redis.service.master.ReplicaReceiver;
 import redis.service.master.ReplicaSender;
@@ -36,7 +37,6 @@ public class MasterCommandHandler implements CommandHandler {
     }
 
 
-
     public synchronized boolean processCommand() {
         ArrayList<String> replicaCommand = new ArrayList<>(commands);
 
@@ -56,9 +56,9 @@ public class MasterCommandHandler implements CommandHandler {
     }
 
     private boolean addCommandToQueue(Command command, ArrayList<String> replicaCommand) {
-        if (transactionMultiCommandService.isTransactionStarted() && !Objects.equals(command, Command.EXEC) && Objects.equals(os, transactionMultiCommandService.getClient()) && !Objects.equals(command, Command.DISCARD) && !transactionMultiCommandService.isDiscard()){
-//            if (command.equals(Command.GET) || command.equals(Command.KEYS)) return false;
-            transactionMultiCommandService.addCommandToQueue(replicaCommand);
+        Transaction transaction = transactionMultiCommandService.getTransaction(os);
+        if (transaction != null && transaction.isTransactionStarted() && !Objects.equals(command, Command.EXEC) && Objects.equals(os, transactionMultiCommandService.getClient(os)) && !Objects.equals(command, Command.DISCARD) && !transaction.isDiscard()) {
+            transactionMultiCommandService.addCommandToQueue(os, replicaCommand);
             try {
                 os.write("+QUEUED\r\n".getBytes());
                 os.flush();

@@ -55,9 +55,9 @@ public class MasterCommandFactory implements Factory {
             return new IncrCommandProcessor();
         } else if (command.equals(Command.MULTI)) {
             return new MultiCommandProcessor(transactionMultiCommandService);
-        }else if (command.equals(Command.EXEC)) {
+        } else if (command.equals(Command.EXEC)) {
             return new ExecCommandProcessor(transactionMultiCommandService);
-        }else if (command.equals(Command.DISCARD)) {
+        } else if (command.equals(Command.DISCARD)) {
             return new DiscardCommandProcessor(transactionMultiCommandService);
         }
         return null;

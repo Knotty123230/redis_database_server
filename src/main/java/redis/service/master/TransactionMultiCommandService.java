@@ -1,33 +1,22 @@
 package redis.service.master;
 
+import redis.model.Transaction;
+
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TransactionMultiCommandService {
     private static volatile TransactionMultiCommandService transactionMultiCommandService;
-    private final AtomicBoolean atomicBoolean;
-    private final AtomicBoolean isDiscard;
-    private final Queue<List<String>> commandsQueue;
-    private final AtomicBoolean isMulti;
-    private final AtomicReference<OutputStream> client;
+    private final Map<OutputStream, Transaction> commandsQueue;
 
     private TransactionMultiCommandService() {
-        commandsQueue = new ConcurrentLinkedDeque<>();
-        atomicBoolean = new AtomicBoolean(false);
-        isMulti = new AtomicBoolean(false);
-        client = new AtomicReference<>();
-        isDiscard = new AtomicBoolean(false);
+        commandsQueue = new ConcurrentHashMap<>();
     }
-    public void setIsDiscard(boolean isDiscard) {
-        this.isDiscard.set(isDiscard);
-    }
-    public boolean isDiscard() {
-        return isDiscard.get();
-    }
+
+
     public static TransactionMultiCommandService getInstance() {
         if (transactionMultiCommandService == null) {
             synchronized (TransactionMultiCommandService.class) {
@@ -39,37 +28,35 @@ public class TransactionMultiCommandService {
         return transactionMultiCommandService;
     }
 
-    public void addCommandToQueue(List<String> command) {
-        commandsQueue.add(command);
+    public void addCommandToQueue(OutputStream os, List<String> command) {
+        if (commandsQueue.containsKey(os)) {
+            commandsQueue.get(os).getQueue().add(command);
+        }
     }
 
-    public void stopTransaction() {
-        atomicBoolean.set(false);
-        isMulti.set(false);
-        client.set(null);
+    public synchronized void startTransaction(OutputStream outputStream) {
+        commandsQueue.put(outputStream, new Transaction(true, true));
     }
 
-
-    public void startTransaction(OutputStream outputStream) {
-        atomicBoolean.set(true);
-        isMulti.set(true);
-        client.set(outputStream);
+    public Transaction getTransaction(OutputStream outputStream) {
+        return commandsQueue.get(outputStream);
     }
 
-    public OutputStream getClient() {
-        return client.get();
-    }
-
-    public boolean isTransactionStarted() {
-        return atomicBoolean.get();
+    public OutputStream getClient(OutputStream os) {
+        if (commandsQueue.containsKey(os)) {
+            return os;
+        }
+        return null;
     }
 
 
-    public Queue<List<String>> getCommandsQueue() {
-        return commandsQueue;
+    public Queue<List<String>> getCommandsQueue(OutputStream os) {
+        if (commandsQueue.containsKey(os)) {
+
+            return commandsQueue.get(os).getQueue();
+        }
+        return null;
     }
 
-    public boolean isMulti() {
-        return isMulti.get();
-    }
+
 }

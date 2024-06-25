@@ -1,6 +1,7 @@
 package redis.command.master;
 
 import redis.command.CommandProcessor;
+import redis.model.Transaction;
 import redis.service.master.TransactionMultiCommandService;
 
 import java.io.IOException;
@@ -16,9 +17,10 @@ public class DiscardCommandProcessor implements CommandProcessor {
 
     @Override
     public void processCommand(List<String> command, OutputStream os) throws IOException {
-        if (this.transactionMultiCommandService.isMulti()){
-            transactionMultiCommandService.setIsDiscard(true);
-            transactionMultiCommandService.stopTransaction();
+        Transaction transaction = transactionMultiCommandService.getTransaction(os);
+        if (transaction.isMulti()) {
+            transaction.setIsDiscard(true);
+            transaction.stopTransaction();
             os.write("+OK\r\n".getBytes());
             os.flush();
             return;
@@ -27,4 +29,5 @@ public class DiscardCommandProcessor implements CommandProcessor {
         os.flush();
 
     }
+
 }

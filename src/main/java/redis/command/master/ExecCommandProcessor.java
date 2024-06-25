@@ -3,6 +3,7 @@ package redis.command.master;
 import redis.command.CommandHandler;
 import redis.command.CommandProcessor;
 import redis.handler.master.MasterCommandHandler;
+import redis.model.Transaction;
 import redis.service.master.ReplicaReceiver;
 import redis.service.master.ReplicaSender;
 import redis.service.master.TransactionMultiCommandService;
@@ -21,19 +22,26 @@ public class ExecCommandProcessor implements CommandProcessor {
 
     @Override
     public void processCommand(List<String> command, OutputStream os) throws IOException {
-        boolean multi = transactionMultiCommandService.isMulti();
+        Transaction transaction = transactionMultiCommandService.getTransaction(os);
+        if (transaction == null) {
+            os.write("-ERR EXEC without MULTI\r\n".getBytes());
+            os.flush();
+            return;
+        }
+        boolean multi = transaction.isMulti();
         System.out.println("MULTI: " + multi);
         if (!multi) {
             os.write("-ERR EXEC without MULTI\r\n".getBytes());
             os.flush();
             return;
         }
-        transactionMultiCommandService.stopTransaction();
-        if (transactionMultiCommandService.isDiscard()) {
+        transaction.stopTransaction();
+        if (transaction.isDiscard()) {
             return;
         }
-        Queue<List<String>> commandsQueue = transactionMultiCommandService.getCommandsQueue();
-        if (commandsQueue.isEmpty()) {
+        Queue<List<String>> commandsQueue = transactionMultiCommandService.getCommandsQueue(os);
+
+        if (commandsQueue == null || commandsQueue.isEmpty()) {
             os.write(("*" + 0 + "\r\n").getBytes());
             os.flush();
             return;

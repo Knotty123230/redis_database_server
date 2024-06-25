@@ -41,7 +41,7 @@ public class CommandUtil {
             return Command.MULTI;
         } else if (remove.toLowerCase().contains(Command.EXEC.getValue()) || remove.equalsIgnoreCase(Command.EXEC.getValue())) {
             return Command.EXEC;
-        }  else if (remove.toLowerCase().contains(Command.DISCARD.getValue()) || remove.equalsIgnoreCase(Command.DISCARD.getValue())) {
+        } else if (remove.toLowerCase().contains(Command.DISCARD.getValue()) || remove.equalsIgnoreCase(Command.DISCARD.getValue())) {
             return Command.DISCARD;
         } else return null;
     }
