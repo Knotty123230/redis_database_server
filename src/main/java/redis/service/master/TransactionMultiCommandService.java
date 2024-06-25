@@ -12,9 +12,9 @@ public class TransactionMultiCommandService {
 
     private TransactionMultiCommandService() {
         commandsQueue = new ConcurrentLinkedDeque<>();
-        transactionMultiCommandService = new TransactionMultiCommandService();
         atomicBoolean = new AtomicBoolean(false);
     }
+
     public static TransactionMultiCommandService getInstance() {
         if (transactionMultiCommandService == null) {
             synchronized (TransactionMultiCommandService.class) {
@@ -25,12 +25,15 @@ public class TransactionMultiCommandService {
         }
         return transactionMultiCommandService;
     }
+
     public void addCommandToQueue(List<String> command) {
         commandsQueue.add(command);
     }
+
     public void stopTransaction() {
         atomicBoolean.set(false);
     }
+
     public void startTransaction() {
         atomicBoolean.set(true);
     }
