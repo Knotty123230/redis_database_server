@@ -57,6 +57,7 @@ public class MasterCommandHandler implements CommandHandler {
 
     private boolean addCommandToQueue(Command command) {
         if (transactionMultiCommandService.isTransactionStarted() && !Objects.equals(command, Command.EXEC)){
+            if (command.equals(Command.GET) || command.equals(Command.KEYS)) return false;
             transactionMultiCommandService.addCommandToQueue(commands);
             try {
                 os.write("+QUEUED\r\n".getBytes());
