@@ -9,10 +9,12 @@ public class TransactionMultiCommandService {
     private static volatile TransactionMultiCommandService transactionMultiCommandService;
     private final AtomicBoolean atomicBoolean;
     private final Queue<List<String>> commandsQueue;
+    private final AtomicBoolean isMulti;
 
     private TransactionMultiCommandService() {
         commandsQueue = new ConcurrentLinkedDeque<>();
         atomicBoolean = new AtomicBoolean(false);
+        isMulti = new AtomicBoolean(false);
     }
 
     public static TransactionMultiCommandService getInstance() {
@@ -32,10 +34,12 @@ public class TransactionMultiCommandService {
 
     public void stopTransaction() {
         atomicBoolean.set(false);
+        isMulti.set(false);
     }
 
     public void startTransaction() {
         atomicBoolean.set(true);
+        isMulti.set(true);
     }
 
     public boolean isTransactionStarted() {
@@ -44,5 +48,9 @@ public class TransactionMultiCommandService {
 
     public Queue<List<String>> getCommandsQueue() {
         return commandsQueue;
+    }
+
+    public boolean isMulti() {
+        return isMulti.get();
     }
 }
