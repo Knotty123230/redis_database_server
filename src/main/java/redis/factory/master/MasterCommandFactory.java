@@ -1,21 +1,26 @@
 package redis.factory.master;
 
+import redis.command.CommandHandler;
 import redis.command.CommandProcessor;
 import redis.command.master.*;
-import redis.model.Command;
 import redis.factory.Factory;
+import redis.handler.master.MasterCommandHandler;
+import redis.model.Command;
 import redis.service.master.ReplicaReceiver;
 import redis.service.master.ReplicaSender;
+import redis.service.master.TransactionMultiCommandService;
 
 public class MasterCommandFactory implements Factory {
     private final Command command;
     private final ReplicaSender replicaSender;
     private final ReplicaReceiver replicaReceiver;
+    private final TransactionMultiCommandService transactionMultiCommandService;
 
-    public MasterCommandFactory(Command command, ReplicaSender replicaSender, ReplicaReceiver replicaReceiver) {
+    public MasterCommandFactory(Command command, ReplicaSender replicaSender, ReplicaReceiver replicaReceiver, TransactionMultiCommandService transactionMultiCommandService) {
         this.command = command;
         this.replicaSender = replicaSender;
         this.replicaReceiver = replicaReceiver;
+        this.transactionMultiCommandService = transactionMultiCommandService;
     }
 
     public CommandProcessor getInstance() {
@@ -48,8 +53,12 @@ public class MasterCommandFactory implements Factory {
             return new XrangeCommandProcessor();
         } else if (command.equals(Command.XREAD)) {
             return new XreadCommandProcessor();
-        }else if (command.equals(Command.INCR)) {
+        } else if (command.equals(Command.INCR)) {
             return new IncrCommandProcessor();
+        } else if (command.equals(Command.MULTI)) {
+            return new MultiCommandProcessor(transactionMultiCommandService);
+        }else if (command.equals(Command.EXEC)) {
+            return new ExecCommandProcessor(transactionMultiCommandService);
         }
         return null;
     }

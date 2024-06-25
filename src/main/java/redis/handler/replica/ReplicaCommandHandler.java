@@ -2,9 +2,9 @@ package redis.handler.replica;
 
 import redis.command.CommandHandler;
 import redis.command.CommandProcessor;
-import redis.model.Command;
 import redis.factory.Factory;
 import redis.factory.replica.ReplicaCommandFactory;
+import redis.model.Command;
 import redis.utils.CommandUtil;
 
 import java.io.IOException;

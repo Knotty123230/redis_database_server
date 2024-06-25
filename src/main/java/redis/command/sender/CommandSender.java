@@ -8,6 +8,7 @@ import java.io.OutputStream;
 
 public abstract class CommandSender {
     protected final CommandParser commandParser;
+
     protected CommandSender(CommandParser commandParser) {
         this.commandParser = commandParser;
     }

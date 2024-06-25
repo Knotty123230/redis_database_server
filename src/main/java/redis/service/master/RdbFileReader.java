@@ -139,8 +139,7 @@ public class RdbFileReader {
                     keysExpiration.put(key, expiration);
                 }
             }
-        } catch (
-                IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         out.flush();

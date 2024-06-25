@@ -9,7 +9,7 @@ import java.util.List;
 
 public class IncrCommandProcessor implements CommandProcessor {
     private final RedisStorage redisStorage;
-    private Integer increment;
+    private final Integer increment;
 
     public IncrCommandProcessor() {
         redisStorage = RedisStorage.getInstance();
@@ -18,7 +18,7 @@ public class IncrCommandProcessor implements CommandProcessor {
 
     @Override
     public void processCommand(List<String> command, OutputStream os) throws IOException {
-        String key = command.remove(0);
+        String key = command.removeFirst();
         String value = redisStorage.getCommand(key);
         if (value == null) {
             os.write((":" + increment + "\r\n").getBytes());

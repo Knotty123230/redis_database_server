@@ -6,6 +6,7 @@ public enum Command {
     ECHO("ECHO"),
     FULLRESYNC("FULLRESYNC"),
     GET("GET"),
+    INCR("INCR"),
     INFO("INFO"),
     KEYS("KEYS"),
     PING("PING"),
@@ -15,8 +16,12 @@ public enum Command {
     REPLCONF("REPLCONF"),
     REPLICATION("REPLICATION"),
     SET("SET"),
+    TYPE("TYPE"),
     WAIT("WAIT"),
-    TYPE("TYPE"), XADD("XADD"), XRANGE("XRANGE"), XREAD("XREAD"), INCR("INCR");
+    XADD("XADD"),
+    XRANGE("XRANGE"),
+    XREAD("XREAD"), MULTI("MULTI"), EXEC("EXEC");
+
     private final String value;
 
     Command(String value) {

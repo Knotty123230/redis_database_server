@@ -1,9 +1,9 @@
 package redis.handler.replica;
 
-import redis.model.Command;
 import redis.command.sender.CommandSender;
 import redis.command.sender.PingCommandSender;
 import redis.command.sender.ReplConfCommandSender;
+import redis.model.Command;
 import redis.parser.CommandParser;
 import redis.service.RdbBytesReader;
 

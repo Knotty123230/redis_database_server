@@ -54,7 +54,6 @@ public class RedisStorage {
                 return "";
             }
         }
-
         return storage.get(key);
     }
 

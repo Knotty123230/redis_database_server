@@ -35,8 +35,12 @@ public class CommandUtil {
             return Command.XRANGE;
         } else if (remove.toLowerCase().contains(Command.XREAD.getValue()) || remove.equalsIgnoreCase(Command.XREAD.getValue())) {
             return Command.XREAD;
-        }else if (remove.toLowerCase().contains(Command.INCR.getValue()) || remove.equalsIgnoreCase(Command.INCR.getValue())) {
+        } else if (remove.toLowerCase().contains(Command.INCR.getValue()) || remove.equalsIgnoreCase(Command.INCR.getValue())) {
             return Command.INCR;
+        } else if (remove.toLowerCase().contains(Command.MULTI.getValue()) || remove.equalsIgnoreCase(Command.MULTI.getValue())) {
+            return Command.MULTI;
+        } else if (remove.toLowerCase().contains(Command.EXEC.getValue()) || remove.equalsIgnoreCase(Command.EXEC.getValue())) {
+            return Command.EXEC;
         } else return null;
     }
 }

@@ -1,11 +1,11 @@
 package redis.factory.replica;
 
 import redis.command.CommandProcessor;
-import redis.model.Command;
 import redis.command.replica.ReplicaFullResyncCommandProcessor;
 import redis.command.replica.ReplicaReplConfCommandProcessor;
 import redis.command.replica.ReplicaSetCommandProcessor;
 import redis.factory.Factory;
+import redis.model.Command;
 
 public class ReplicaCommandFactory implements Factory {
     private final Command command;
