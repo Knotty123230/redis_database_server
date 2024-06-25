@@ -22,23 +22,25 @@ public class ExecCommandProcessor implements CommandProcessor {
     @Override
     public void processCommand(List<String> command, OutputStream os) throws IOException {
         boolean multi = transactionMultiCommandService.isMulti();
-        if (!multi){
+        System.out.println("MULTI: " + multi);
+        if (!multi) {
             os.write("-ERR EXEC without MULTI\r\n".getBytes());
             os.flush();
             return;
         }
         transactionMultiCommandService.stopTransaction();
-        transactionMultiCommandService.isMulti();
         Queue<List<String>> commandsQueue = transactionMultiCommandService.getCommandsQueue();
-        if (commandsQueue.isEmpty()){
+        if (commandsQueue.isEmpty()) {
             os.write(("*" + 0 + "\r\n").getBytes());
+            os.flush();
+            return;
         }
+        System.out.println("COMMANDS QUEUE: " + commandsQueue);
+        os.write(("*" + commandsQueue.size() + "\r\n").getBytes());
         while (!commandsQueue.isEmpty()) {
             List<String> commands = commandsQueue.poll();
             CommandHandler commandHandler = new MasterCommandHandler(new ReplicaReceiver(), ReplicaSender.getInstance(), commands, os);
-            Thread thread = new Thread(commandHandler);
-            thread.start();
+            commandHandler.processCommand();
         }
-
     }
 }

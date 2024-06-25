@@ -43,7 +43,7 @@ public class MasterCommandHandler implements CommandHandler {
         String remove = commands.removeFirst();
         Command command = CommandUtil.getCommand(remove);
         if (command == null) return true;
-        if (addCommandToQueue(command)) return true;
+        if (addCommandToQueue(command, replicaCommand)) return true;
         Factory commandFactory = new MasterCommandFactory(command, replicaSender, replicaReceiver, transactionMultiCommandService);
         CommandProcessor commandProcessor = commandFactory.getInstance();
         try {
@@ -55,10 +55,10 @@ public class MasterCommandHandler implements CommandHandler {
         return false;
     }
 
-    private boolean addCommandToQueue(Command command) {
-        if (transactionMultiCommandService.isTransactionStarted() && !Objects.equals(command, Command.EXEC)){
-            if (command.equals(Command.GET) || command.equals(Command.KEYS)) return false;
-            transactionMultiCommandService.addCommandToQueue(commands);
+    private boolean addCommandToQueue(Command command, ArrayList<String> replicaCommand) {
+        if (transactionMultiCommandService.isTransactionStarted() && !Objects.equals(command, Command.EXEC) && Objects.equals(os, transactionMultiCommandService.getClient())){
+//            if (command.equals(Command.GET) || command.equals(Command.KEYS)) return false;
+            transactionMultiCommandService.addCommandToQueue(replicaCommand);
             try {
                 os.write("+QUEUED\r\n".getBytes());
                 os.flush();

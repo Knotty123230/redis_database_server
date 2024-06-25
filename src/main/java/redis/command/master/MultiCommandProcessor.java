@@ -16,7 +16,7 @@ public class MultiCommandProcessor implements CommandProcessor {
 
     @Override
     public void processCommand(List<String> command, OutputStream os) throws IOException {
-        transactionMultiCommandService.startTransaction();
+        transactionMultiCommandService.startTransaction(os);
         os.write("+OK\r\n".getBytes());
         os.flush();
     }
