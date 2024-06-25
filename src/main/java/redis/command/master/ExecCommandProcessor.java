@@ -30,6 +30,9 @@ public class ExecCommandProcessor implements CommandProcessor {
         transactionMultiCommandService.stopTransaction();
         transactionMultiCommandService.isMulti();
         Queue<List<String>> commandsQueue = transactionMultiCommandService.getCommandsQueue();
+        if (commandsQueue.isEmpty()){
+            os.write(("*" + 0 + "\r\n").getBytes());
+        }
         while (!commandsQueue.isEmpty()) {
             List<String> commands = commandsQueue.poll();
             CommandHandler commandHandler = new MasterCommandHandler(new ReplicaReceiver(), ReplicaSender.getInstance(), commands, os);
